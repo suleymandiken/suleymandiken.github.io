@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="tr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zarfım · Süleyman Diken</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#ee6c4d">
+<link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-title" content="Zarfım">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);--bg:#faf6f1;--card:#fff;--tx:#241a16;--mu:#857a72;--bd:#ece3da;--ac:#ee6c4d;--on:#fff;--neg:#d64545;--pos:#15935a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#150f0d;--card:#221a17;--tx:#f6ede4;--mu:#a99c92;--bd:#332826;--ac:#f0805f;--on:#2a130c;--neg:#ff8a80;--pos:#5fd39a}}
+:root[data-theme="dark"]{--bg:#150f0d;--card:#221a17;--tx:#f6ede4;--mu:#a99c92;--bd:#332826;--ac:#f0805f;--on:#2a130c;--neg:#ff8a80;--pos:#5fd39a}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+#app{max-width:560px;margin:0 auto;padding:18px 16px 120px}
+h1{font-size:26px;letter-spacing:-.03em;margin:0 0 4px;font-weight:800}h2{font-size:18px;margin:20px 0 10px;letter-spacing:-.02em}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:22px;padding:18px;margin-bottom:12px}
+.row{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.mu{color:var(--mu);font-size:13px}.neg{color:var(--neg)}.pos{color:var(--pos)}
+.big{font-size:44px;font-weight:800;letter-spacing:-.04em;color:var(--ac);line-height:1.1}.b2{font-size:22px;font-weight:800;letter-spacing:-.02em}
+input,select,textarea{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:14px;padding:12px;width:100%}
+button{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:14px;padding:11px 14px;cursor:pointer;font-weight:600}
+button:disabled{opacity:.35;cursor:default}
+button.p{background:var(--ac);color:var(--on);border:0}button.w{width:100%;margin-top:10px}button.g{background:none;border:0;color:var(--mu);padding:6px}
+label.fl{display:block;text-align:center;border:1px dashed var(--ac);color:var(--ac);border-radius:14px;padding:11px;margin-top:10px;cursor:pointer;font-weight:600}
+.lb{display:block;font-size:12px;color:var(--mu);margin:12px 0 4px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.chip.on,.seg .on{background:var(--ac);color:var(--on);border-color:var(--ac)}
+.seg{display:flex;gap:8px}.seg button{flex:1}
+.pbar,.bar{height:7px;background:var(--bd);border-radius:6px;overflow:hidden}.pbar i{display:block;height:100%;background:var(--ac)}
+.ec{background:color-mix(in srgb,hsl(var(--h) 60% 50%) 18%,var(--card));border-radius:20px;padding:14px}
+.ec .emo{font-size:26px}.ec .b2{margin:2px 0}.bar{margin-top:8px;background:color-mix(in srgb,var(--tx) 12%,transparent)}.bar i{display:block;height:100%;background:hsl(var(--h) 55% 58%)}
+.tx{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--bd)}.tx:last-child{border:0}
+.tx img{width:42px;height:42px;object-fit:cover;border-radius:10px;cursor:pointer;background:var(--bd)}.ti{font-size:24px;width:42px;text-align:center;flex:none}
+.tx .m{flex:1;min-width:0}.tx .m b,.tx .m>span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ban{background:color-mix(in srgb,var(--ac) 16%,var(--card));border-radius:18px;padding:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.pill{display:inline-block;font-size:12px;padding:5px 10px;border-radius:20px;background:var(--card);border:1px solid var(--bd);color:var(--mu);white-space:nowrap}
+.li{display:flex;gap:12px;align-items:center;padding:14px 2px;border-bottom:1px solid var(--bd);cursor:pointer}.li:last-child{border:0}
+.li .ic{font-size:20px;width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;background:var(--bg);flex:none}
+.bars{display:flex;align-items:flex-end;gap:6px;height:150px;margin-top:14px}
+.bars>div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:10px;color:var(--mu);gap:4px;min-width:0}
+.bars i{display:block;width:100%;border-radius:8px 8px 4px 4px;background:var(--ac);min-height:3px}.bars i.pr{background:color-mix(in srgb,var(--ac) 25%,transparent);border:1.5px dashed var(--ac)}
+nav{position:fixed;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));max-width:544px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:26px;padding:6px;z-index:4}
+nav button{border:0;background:none;display:flex;flex-direction:column;align-items:center;font-size:11px;color:var(--mu);padding:6px 0;gap:2px}nav button.on{color:var(--ac)}
+nav .fab{width:58px;height:58px;border-radius:50%;background:var(--ac);color:var(--on);font-size:24px;margin:-26px auto 0;padding:0;justify-content:center;box-shadow:0 6px 18px #0004}
+.hide{display:none!important}
+.ov{position:fixed;inset:0;background:#0007;z-index:5}.sh{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--card);border-radius:24px 24px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));max-height:92%;overflow:auto;max-width:560px;margin:0 auto}
+#pv{max-width:100%;max-height:150px;border-radius:12px;margin-top:8px;display:block}
+#big{position:fixed;inset:0;background:#000d;z-index:9;display:flex;align-items:center;justify-content:center}#big img{max-width:96%;max-height:92%}
+#toast{position:fixed;left:16px;right:16px;bottom:calc(96px + env(safe-area-inset-bottom,0px));max-width:528px;margin:0 auto;background:var(--tx);color:var(--bg);padding:12px 16px;border-radius:14px;z-index:20;text-align:center;font-weight:600}
+#mic.on{background:var(--ac);color:var(--on);border-color:var(--ac)}
+</style></head><body>
+<div id="app"></div>
+<nav id="nav" class="hide">
+<button data-a="nav" data-v="home">🏠<span>Ana sayfa</span></button>
+<button data-a="nav" data-v="env">✉️<span>Zarflar</span></button>
+<button class="fab" data-a="sheet" aria-label="Harcama ekle">＋</button>
+<button data-a="nav" data-v="an">📊<span>Analiz</span></button>
+<button data-a="nav" data-v="menu">☰<span>Menü</span></button></nav>
+<div id="sheet"></div><div id="toast" class="hide"></div><div id="big" class="hide" data-a="unzoom"><img alt=""></div>
+<script>
+// ---------- sabitler ve yardımcılar ----------
+const M=["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara"],H=[140,25,270,350,45,200,320,90,170,10,230,60];
+const DEF=[["Kira","🏠",35,1],["Market","🛒",14,1],["Yemek","🍔",8,1],["Ulaşım","🚌",6,1],["Faturalar","💡",8,1],["Kahve","☕",2,0],["Abonelikler","🎬",2,0],["Kişisel bakım","💄",3,0],["Spor salonu","🏋️",2,0],["Eğlence","🎉",5,1],["Tatil fonu","✈️",5,0],["Acil durum fonu","💰",5,0]];
+const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const tl=n=>(n<0?"−":"")+"₺"+Math.abs(Math.round(n||0)).toLocaleString("tr-TR");
+const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const mk=(y,m)=>{const d=new Date(y,m,1);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const cj=o=>JSON.stringify(o,(k,v)=>v&&typeof v=="object"&&!Array.isArray(v)?Object.keys(v).sort().reduce((a,x)=>(a[x]=v[x],a),{}):v);
+const clone=o=>JSON.parse(JSON.stringify(o));
+const envOf=id=>S&&id?S.env.find(e=>e.id==id):null;
+const dday=s=>{const d=new Date(s+"T12:00:00");return d.getDate()+" "+M[d.getMonth()]};
+const DEBTRULE="\nBU İSTEK BORÇ AKTARIMI: Girdi Findeks kredi raporu ya da banka uygulaması ekran görüntüleridir. Yalnızca k=borc kayıtları üret; gider, gelir ya da bordro üretme. Her kredi kartı için tip=kart: bal=güncel/dönem borcu (limit değil), asgari=asgari ödeme, gun=son ödeme günü (ayın günü), limit=kart limiti. Her ihtiyaç, taşıt, konut kredisi ve taksitli ürün için tip=taksit: aylik=aylık taksit tutarı, kalan_ay=kalan taksit sayısı, gun=taksit günü. ad alanına banka ve ürün adını yaz (örn: Garanti Bonus Kart, Akbank İhtiyaç Kredisi); mevcut borçlardan biriyle aynı ürünse aynı adı kullan. Kapanmış ya da borcu sıfır olan ürünleri atla. Görünmeyen alanı 0 bırak, tahmin etme. Mesajda toplam borcu ve varsa gecikmedeki ürünü belirt.";
+let CH=DEF.map(d=>({n:d[0],e:d[1],w:d[2],on:!!d[3]}));
+const chipsHTML=()=>CH.map((d,i)=>`<button class="chip ${d.on?"on":""}" data-a="chip" data-v="${i}">${esc(d.e)} ${esc(d.n)}</button>`).join("");
+
+// ---------- durum ----------
+let S=null,view="home",SH=null,dtype="kart",RTY="gider",sample=null,canAI=false,imgAccept="image/*",imgMax=4e6,imgCnt=1,PB=null,AP=[],SM={},REC=null,SP=null,AIWHY="",TXQ={q:"",f:"all",off:0,p:null},TT,DK=null,PR=false;
+let DB=null,UID=null,LS={st:"",m:{}},SYT=null,SYNCING=false,DIRTY=false,ERRN=0,IMGC={},IMGS=new Set(),SYNC="local";
+try{S=JSON.parse(localStorage.getItem("zk2"))}catch(e){}
+function norm(){if(!S||!Array.isArray(S.env)){S=null;return}S.free=+S.free||0;S.pay=S.pay||[];S.debts=S.debts||[];S.tx=S.tx||[];S.rec=S.rec||[];S.prof=S.prof||{};S.income=+S.income||0;S.payDay=+S.payDay||1;
+S.env.forEach((e,k)=>{e.carry=+e.carry||0;e.bud=+e.bud||0;if(e.roll===undefined)e.roll=true;if(e.h===undefined)e.h=H[k%12]})}
+norm();
+function cache(){try{localStorage.setItem("zk2",JSON.stringify(S));return true}catch(e){return false}}
+function save(){const ok=cache();if(DB)schedSync();else if(!ok)toast("Depolama dolu. Eski fiş fotoğraflarını silin ya da Ayarlar'dan yedek alın.")}
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.remove("hide");clearTimeout(TT);TT=setTimeout(()=>t.classList.add("hide"),Math.max(3200,m.length*70))}
+
+// ---------- bulut eşitleme (Claude db, kullanıcıya özel) ----------
+const ST=()=>DB.doc("data/users/"+UID+"/state");
+const syncTxt=()=>({local:"📱 Yalnızca bu cihazda",wait:"⏳ Eşitleniyor…",ok:"☁️ Eşitlendi",err:"⚠️ Eşitlenemedi"})[SYNC];
+function syncUI(s){SYNC=s;document.querySelectorAll(".sy").forEach(el=>el.textContent=syncTxt())}
+function schedSync(){clearTimeout(SYT);syncUI("wait");SYT=setTimeout(doSync,700)}
+function txMonths(){const m={};(S?S.tx:[]).forEach(t=>{const k=t.date.slice(0,7);(m[k]=m[k]||[]).push(t)});Object.values(m).forEach(a=>a.sort((x,y)=>x.id<y.id?-1:x.id>y.id?1:0));return m}
+async function doSync(){SYT=null;if(!DB||!S)return;if(SYNCING){DIRTY=true;return}SYNCING=true;DIRTY=false;
+try{const ref=ST();
+for(const t of S.tx)if(t.img&&t.img.startsWith("data:")){await ref.collection("img").doc(t.id).set({d:t.img});IMGC[t.id]=t.img;IMGS.add(t.id);t.img="@"}
+const {tx,...st}=S,sj=cj(st);if(sj!==LS.st){await ref.set(JSON.parse(sj));LS.st=sj}
+const m=txMonths();for(const k of new Set([...Object.keys(m),...Object.keys(LS.m)])){const j=m[k]?cj(m[k]):null;if(j===(LS.m[k]??null))continue;const r=ref.collection("tx").doc(k);if(j===null){await r.delete();delete LS.m[k]}else{await r.set({items:JSON.parse(j)});LS.m[k]=j}}
+const live=new Set(S.tx.filter(t=>t.img).map(t=>t.id));for(const id of [...IMGS])if(!live.has(id)){await ref.collection("img").doc(id).delete();IMGS.delete(id);delete IMGC[id]}
+cache();ERRN=0;syncUI("ok")}
+catch(e){syncUI("err");if(e&&e.code=="quota_exceeded")toast("Bulut kotası doldu. Eski fiş fotoğraflarını silmeyi dene.");else if(++ERRN<4&&!DIRTY)setTimeout(schedSync,5000*ERRN)}
+finally{SYNCING=false;if(DIRTY)schedSync()}}
+function onStateSnap(s){if(!s.exists||s.metadata.hasPendingWrites)return;const r=cj(s.data());if(r===LS.st)return;
+let loc="";if(S){const {tx,...st}=S;loc=cj(st)}
+if(!S||loc===LS.st){S={...JSON.parse(r),tx:S?S.tx:[]};norm();LS.st=r;afterRemote()}else LS.st=r}
+function onTxSnap(q){if(q.metadata.hasPendingWrites||!S)return;let ch=false;const m=txMonths();
+q.docChanges().forEach(c=>{const k=c.doc.id,r=c.type=="removed"?null:cj(c.doc.data().items||[]),b=LS.m[k]??null;if(r===b)return;const loc=m[k]?cj(m[k]):null;
+if(loc===b){S.tx=S.tx.filter(t=>t.date.slice(0,7)!==k);if(r)S.tx.push(...JSON.parse(r));ch=true}
+if(r===null)delete LS.m[k];else LS.m[k]=r});
+if(ch){S.tx.forEach(t=>{if(t.img=="@")IMGS.add(t.id)});afterRemote()}}
+function afterRemote(){cache();softRender()}
+async function initSync(){try{if(!window.claude||typeof claude.use!="function")return;const [db,u]=await Promise.all([claude.use("db"),claude.use("user")]);if(!db||!u)return;const id=await u.id();if(!id)return;
+DB=db;UID=id;syncUI("wait");const ref=ST(),[s0,q0]=await Promise.all([ref.get(),ref.collection("tx").get()]);
+if(s0.exists){const st=clone(s0.data()),tx=[];LS.st=cj(st);LS.m={};q0.docs.forEach(d=>{const it=clone(d.data().items||[]);LS.m[d.id]=cj(it);tx.push(...it)});
+let first=true;try{first=localStorage.getItem("zk2u")!==UID}catch(e){}
+const extra=first&&S?S.tx.filter(t=>!tx.some(x=>x.id==t.id)):[];
+S={...st,tx:tx.concat(extra)};norm();S.tx.forEach(t=>{if(t.img=="@")IMGS.add(t.id)});
+if(extra.length){toast(extra.length+" işlem bu cihazdan buluta eklendi.");schedSync()}else syncUI("ok")}
+else if(S){await doSync()}else syncUI("ok");
+try{localStorage.setItem("zk2u",UID)}catch(e){}cache();
+ref.onSnapshot(onStateSnap,()=>syncUI("err"));ref.collection("tx").onSnapshot(onTxSnap,()=>syncUI("err"));
+if(S){roll();recRun()}render(false)}catch(e){syncUI("err")}}
+async function hydrate(){if(!DB)return;for(const el of document.querySelectorAll("img[data-lazy]")){const id=el.dataset.lazy;if(!IMGC[id]){try{const s=await ST().collection("img").doc(id).get();if(!s.exists)continue;IMGC[id]=s.data().d}catch(e){continue}}document.querySelectorAll(`img[data-lazy="${id}"]`).forEach(x=>{if(x.src!==IMGC[id])x.src=IMGC[id]})}}
+const imgOf=t=>t.img=="@"?(IMGC[t.id]||""):t.img;
+
+// ---------- dönem hesapları ----------
+function per(n){const d=S.payDay,cl=(y,m)=>new Date(y,m,Math.min(d,new Date(y,m+1,0).getDate()));let s=cl(n.getFullYear(),n.getMonth());if(s>n)s=cl(n.getFullYear(),n.getMonth()-1);return{s,e:cl(s.getFullYear(),s.getMonth()+1)}}
+const prev=p=>per(new Date(p.s.getTime()-864e5));
+const plbl=p=>{const l=new Date(p.e.getTime()-864e5);return `${p.s.getDate()} ${M[p.s.getMonth()]} – ${l.getDate()} ${M[l.getMonth()]}`};
+function stat(p,cut){const a=iso(p.s),b=cut||iso(p.e),tx=S.tx.filter(t=>t.date>=a&&t.date<b).sort((x,y)=>y.date.localeCompare(x.date)||(y.id>x.id?1:-1)),sp={};let ns=0,ex=0,out=0;
+tx.forEach(t=>{if(t.type=="gelir"){ex+=t.amt;return}out+=t.amt;if(envOf(t.env))sp[t.env]=(sp[t.env]||0)+t.amt;else ns+=t.amt});return{tx,sp,ex,ns,out}}
+function roll(){if(!S)return;const cur=iso(per(new Date()).s);if(!S.cs||S.cs>cur){S.cs=cur;save();return}if(S.cs==cur)return;
+let g=0;while(S.cs<cur&&g++<60){const p=per(new Date(S.cs+"T12:00:00")),st=stat(p),alloc=S.env.reduce((x,v)=>x+v.bud,0);let f=S.income+st.ex+S.free-alloc-st.ns;
+S.env.forEach(e=>{const t=e.carry+e.bud-(st.sp[e.id]||0);if(e.roll)e.carry=t;else{f+=t;e.carry=0}});S.free=f;S.cs=iso(p.e)}save()}
+function recRun(){if(!S||!S.rec.length)return;const n=new Date(),cur=mk(n.getFullYear(),n.getMonth());let ch=0;
+S.rec.forEach(r=>{let [y,m]=r.last.split("-").map(Number);m--;for(let g=0;g<12;g++){m++;if(m>11){m=0;y++}const k=mk(y,m);if(k>cur)break;const due=new Date(y,m,Math.min(r.day,new Date(y,m+1,0).getDate()));if(due>n)break;
+const id="r_"+r.id+"_"+k;if(!S.tx.some(t=>t.id==id)){S.tx.push({id,type:r.type,env:r.type=="gider"?(r.env||null):null,amt:r.amt,date:iso(due),note:r.name,img:"",rec:r.id});ch++}r.last=k}});
+if(ch){save();toast(ch+" düzenli ödeme otomatik eklendi.")}}
+function calc(){const n=new Date();n.setHours(0,0,0,0);const p=per(n),{s,e}=p,st=stat(p),alloc=S.env.reduce((x,v)=>x+v.bud,0),envTot=S.env.reduce((x,v)=>x+v.bud+v.carry,0),envSp=S.env.reduce((x,v)=>x+(st.sp[v.id]||0),0),
+td=Math.max(1,Math.round((e-s)/864e5)),el=Math.min(td,Math.round((n-s)/864e5)+1),proj=envSp/el*td;
+return{s,e,n,p,tx:st.tx,sp:st.sp,ns:st.ns,ex:st.ex,out:st.out,pool:S.income+st.ex+S.free-st.ns,alloc,envTot,envSp,rem:envTot-envSp,td,el,avg:envSp/el,projRem:envTot-proj,left:Math.max(0,Math.round((e-n)/864e5)),prog:Math.min(1,Math.max(0,(n-s)/(e-s))),lbl:plbl(p),nx:`${e.getDate()} ${M[e.getMonth()]}`}}
+const obl=()=>S.debts.reduce((x,d)=>x+(d.k=="kart"?+d.min||0:+d.monthly||0),0);
+function upcoming(c){const out=[],n=c.n,add=(day,fn)=>{for(let i=0;i<2;i++){const y=n.getFullYear(),m=n.getMonth()+i,d=new Date(y,m,Math.min(day,new Date(y,m+1,0).getDate()));if(d>=n&&d<c.e)fn(d)}};
+S.rec.filter(r=>r.type=="gider").forEach(r=>add(r.day,d=>{if(mk(d.getFullYear(),d.getMonth())>r.last)out.push({n:r.name,a:r.amt,d})}));
+S.debts.forEach(x=>{if(!x.day)return;const a=x.k=="kart"?+x.min||0:+x.monthly||0;if(a>0)add(x.day,d=>out.push({n:x.name+(x.k=="kart"?" (asgari)":" (taksit)"),a,d}))});
+return out.sort((a,b)=>a.d-b.d)}
+function payoff(d){if(!(d.bal>0)||!(d.min>0))return "";const r=(+d.faiz||0)/100;let b=d.bal,m=0,i=0;
+while(b>0.5&&m<600){const it=b*r;if(d.min<=it)return "⚠️ Asgari ödeme faizi bile karşılamıyor; bu borç bu hızla hiç bitmez.";i+=it;b=b+it-d.min;m++}
+return m>=600?"⚠️ Bu hızla 50 yıldan uzun sürer.":`Yalnız asgari ödenirse ~${m} ayda biter${r?`, faize ~${tl(i)} gider`:" (faiz oranını girersen maliyeti hesaplarım)"}.`}
+
+// ---------- görünümler ----------
+const ecard=(e,c)=>{const sp=c.sp[e.id]||0,tot=e.bud+e.carry,l=tot-sp,p=tot>0?Math.min(1,sp/tot):(sp>0?1:0);return `<div class="ec" style="--h:${e.h};cursor:pointer" data-a="nav" data-v="env"><div class="row"><span class="emo">${esc(e.emo)}</span><span class="mu">%${Math.round(p*100)}</span></div><div>${esc(e.name)}</div><div class="b2 ${l<0?"neg":""}">${tl(l)}</div><div class="mu">toplam ${tl(tot)}${e.carry?` · devir ${tl(e.carry)}`:""}</div><div class="bar"><i style="width:${p*100}%"></i></div></div>`};
+const txrow=t=>{const e=envOf(t.env),im=t.img?`<img ${t.img=="@"?`data-lazy="${t.id}" src="${IMGC[t.id]||""}"`:`src="${t.img}"`} data-a="zoom" data-v="${t.id}" alt="fiş">`:`<span class="ti">${t.type=="gelir"?"💵":e?esc(e.emo):/^(Borç|Taksit)/.test(t.note||"")?"💳":"🏷️"}</span>`;
+return `<div class="tx">${im}<div class="m" data-a="edit" data-v="${t.id}" style="cursor:pointer"><b>${esc(t.note||(e?e.name:t.type=="gelir"?"Gelir":"İşlem"))}</b><span class="mu">${dday(t.date)} · ${t.type=="gelir"?"Gelir":e?esc(e.name):"Zarfsız"}${t.rec?" · ↻ düzenli":""}</span></div><b class="${t.type=="gelir"?"pos":"neg"}">${t.type=="gelir"?"+":"−"}${tl(t.amt)}</b><button class="g" data-a="del" data-v="${t.id}" aria-label="Sil">✕</button></div>`};
+const V={};
+V.home=()=>{const c=calc(),un=c.pool-c.alloc,up=upcoming(c),upT=up.reduce((x,u)=>x+u.a,0),ob=obl(),ct=S.debts.filter(d=>d.k=="kart").reduce((x,d)=>x+(+d.bal||0),0);
+$("#app").innerHTML=`<div class="row" style="align-items:flex-start"><div><h1>Merhaba ${esc(S.name||"")} 👋</h1><div class="mu">Paranın durumu şöyle.</div></div></div>
+<div class="row" style="margin:14px 0 18px;gap:12px"><div style="flex:1"><div class="mu">${c.lbl}</div><div class="pbar" style="margin-top:6px"><i style="width:${c.prog*100}%"></i></div></div><div class="card" style="margin:0;padding:8px 14px;text-align:center"><b class="b2">${c.left}</b><div class="mu">gün kaldı</div></div></div>
+<div class="card"><div class="mu">Harcamak için kalan</div><div class="big ${c.rem<0?"neg":""}">${tl(c.rem)}</div><div class="mu">sonraki maaş · ${c.nx}</div>
+${c.envSp>0?`<div class="mu" style="margin-top:8px">Günde ortalama ${tl(c.avg)} · bu hızla dönem sonunda <b class="${c.projRem<0?"neg":"pos"}">${c.projRem<0?tl(-c.projRem)+" açık verirsin":tl(c.projRem)+" kalır"}</b></div>`:""}
+<div class="row" style="margin-top:14px"><button class="p" style="flex:1" data-a="sheet">+ Harcama ekle</button></div></div>
+${upT>0?`<div class="card"><div class="row"><b>Maaş gününe kadar ödenecek</b><b class="neg">${tl(upT)}</b></div>${up.slice(0,5).map(u=>`<div class="row mu" style="margin-top:6px"><span>${u.d.getDate()} ${M[u.d.getMonth()]} · ${esc(u.n)}</span><span>${tl(u.a)}</span></div>`).join("")}${up.length>5?`<div class="mu" style="margin-top:6px">+${up.length-5} kalem daha</div>`:""}</div>`:""}
+${un>0.5?`<div class="ban"><span>Maaşının <b>${tl(un)}</b> kadarı henüz dağıtılmadı</span><button class="g" data-a="nav" data-v="env" style="color:var(--ac)">Dağıt →</button></div>`:un<-0.5?`<div class="ban" style="background:color-mix(in srgb,var(--neg) 16%,var(--card))"><span>Zarflara ayırdığın ve zarfsız harcadığın para, elindekini <b>${tl(-un)}</b> aşıyor.</span><button class="g" data-a="nav" data-v="env" style="color:var(--neg)">Düzelt →</button></div>`:""}
+${S.debts.length?`<div class="card" data-a="nav" data-v="debt" style="cursor:pointer"><div class="row"><div><div class="mu">Aylık borç yükü</div><div class="b2 neg">${tl(ob)}</div></div><div style="text-align:right"><div class="mu">Kart borcu</div><div class="b2">${tl(ct)}</div></div></div>${S.income?`<div class="mu" style="margin-top:6px">Gelirinin %${Math.round(ob/S.income*100)}'i borç ödemesine gidiyor.</div>`:""}</div>`:""}
+<div class="row"><h2>Zarflar</h2><button class="g" data-a="nav" data-v="env">Tümünü gör →</button></div>
+<div class="grid">${S.env.map(e=>ecard(e,c)).join("")||'<p class="mu">Zarf yok.</p>'}</div>
+<div class="row"><h2>Son işlemler</h2><button class="g" data-a="nav" data-v="tx">Tümü →</button></div>
+<div class="card">${c.tx.slice(0,6).map(txrow).join("")||'<p class="mu">Bu dönem henüz işlem yok. + ile ilk harcamanı ekle.</p>'}</div>
+`};
+V.env=()=>{const c=calc(),un=c.pool-c.alloc;
+$("#app").innerHTML=`<h1>Zarflar</h1><div class="card"><div class="mu">DAĞITILAN</div><div class="big">${tl(c.alloc)}</div><div class="mu">/ ${tl(c.pool)} dağıtılabilir${S.free?` · önceki dönemlerden ${tl(S.free)} dahil`:""}${c.ns?` · zarfsız harcamalar (${tl(c.ns)}) düşüldü`:""}</div>
+<div style="margin-top:8px">${un>=0?`Dağıtılmamış: <b>${tl(un)}</b>`:`<b class="neg">${tl(-un)} fazla dağıttın</b>`}</div>
+<div class="grid"><button class="w" data-a="suggest">✨ Önerilen dağılım</button><button class="w" data-a="move">↔ Zarflar arası aktar</button></div></div>
+${S.env.map(e=>{const sp=c.sp[e.id]||0,tot=e.bud+e.carry;return `<div class="ec" style="--h:${e.h};margin-bottom:10px"><div class="row"><div><span class="emo">${esc(e.emo)}</span> <b>${esc(e.name)}</b></div><div style="flex:none"><button class="g" data-a="editenv" data-v="${e.id}">✎ ${tl(e.bud)}</button><button class="g" data-a="delenv" data-v="${e.id}" aria-label="Sil">✕</button></div></div>
+<div class="mu">harcanan ${tl(sp)} · kalan <b class="${tot-sp<0?"neg":""}">${tl(tot-sp)}</b>${e.carry?` · devir ${tl(e.carry)}`:""}</div><div class="bar"><i style="width:${tot>0?Math.min(100,sp/tot*100):(sp>0?100:0)}%"></i></div>
+<button class="g" data-a="roll" data-v="${e.id}" style="padding-left:0;text-align:left">↻ Artan para ${e.roll?"sonraki döneme bu zarfta devreder":"serbest paraya döner"} · değiştir</button></div>`}).join("")}
+<button class="w" data-a="addenv">+ Yeni zarf</button>`};
+V.an=()=>{const c=calc(),cols=[];let p=c.p;for(let i=0;i<6;i++){const st=stat(p);cols.unshift({l:M[p.s.getMonth()],v:st.out,cur:i==0});p=prev(p)}
+const proj=c.out/c.el*c.td,mx=Math.max(1,proj,...cols.map(x=>x.v)),inc=S.income+c.ex,pp=prev(c.p),cut=iso(new Date(pp.s.getTime()+(c.n-c.s)+864e5)),ps=stat(pp,cut),hasPrev=ps.tx.length>0;
+const cats=S.env.map(e=>({n:e.emo+" "+e.name,a:c.sp[e.id]||0,b:ps.sp[e.id]||0})).concat([{n:"🏷️ Zarfsız",a:c.ns,b:ps.ns}]).filter(x=>x.a||x.b).sort((x,y)=>y.a-x.a);
+const pl={};c.tx.filter(t=>t.type=="gider").forEach(t=>{const k=(t.note||"—").trim().toLocaleLowerCase("tr");pl[k]=pl[k]||{n:t.note||"—",a:0,c:0};pl[k].a+=t.amt;pl[k].c++});const top=Object.values(pl).sort((a,b)=>b.a-a.a).slice(0,5);
+const sr=inc>0?(inc-proj)/inc:null,dr=S.income>0?obl()/S.income:null;
+$("#app").innerHTML=`<h1>Analiz</h1><div class="mu">${c.lbl} · ${c.el}. gün / ${c.td}</div>
+<div class="card" style="margin-top:14px"><div class="grid"><div><div class="mu">Bu dönem harcanan</div><div class="b2">${tl(c.out)}</div></div><div><div class="mu">Dönem sonu tahmini</div><div class="b2 ${proj>inc?"neg":""}">${tl(proj)}</div></div></div>
+<div class="mu" style="margin-top:8px">Tahmin, şimdiye kadarki günlük hızın dönem sonuna taşınmasıdır; kira gibi tek seferlik büyük ödemeler onu şişirebilir.</div>
+<div class="bars">${cols.map(x=>`<div><span>${x.v?Math.round(x.v/1000)+"b":""}</span><i style="height:${x.v/mx*100}%"></i><span>${x.l}${x.cur?" •":""}</span></div>`).join("")}<div><span>${Math.round(proj/1000)}b</span><i class="pr" style="height:${proj/mx*100}%"></i><span>tahmin</span></div></div></div>
+<div class="grid"><div class="card"><div class="mu">Bu hızla tasarruf oranı</div><div class="b2 ${sr!==null&&sr<0?"neg":sr>=.1?"pos":""}">${sr===null?"—":"%"+Math.round(sr*100)}</div><div class="mu">${sr===null?"":sr<0?"Gelirinden fazla harcıyorsun.":sr<.1?"%10'un altı: kırılgan.":"İyi gidiyor."}</div></div>
+<div class="card"><div class="mu">Borç yükü / gelir</div><div class="b2 ${dr>.35?"neg":dr<=.2?"pos":""}">${dr===null?"—":"%"+Math.round(dr*100)}</div><div class="mu">${dr===null?"":dr>.35?"Tehlikeli bölge.":dr>.2?"Dikkat.":"Sağlıklı."}</div></div></div>
+<div class="card"><b>Kategoriye göre</b><div class="mu">${hasPrev?"Geçen dönemin aynı gününe göre":"Karşılaştırma için geçen döneme ait kayıt yok"}</div>${cats.map(x=>{const d=x.a-x.b;return `<div class="row" style="margin-top:10px"><span>${esc(x.n)}</span><span><b>${tl(x.a)}</b>${hasPrev&&d?` <span class="${d>0?"neg":"pos"}" style="font-size:13px">${d>0?"+":"−"}${tl(Math.abs(d)).slice(0)}</span>`:""}</span></div><div class="bar" style="--h:15"><i style="width:${c.out?x.a/c.out*100:0}%"></i></div>`}).join("")||'<p class="mu">Bu dönem gider yok.</p>'}</div>
+${top.length?`<div class="card"><b>En çok harcadığın yerler</b>${top.map(x=>`<div class="row" style="margin-top:8px"><span>${esc(x.n)} <span class="mu">· ${x.c} kez</span></span><b>${tl(x.a)}</b></div>`).join("")}</div>`:""}
+`};
+const MI=[["tx","🧾","Hareketler","Tüm işlemler; arama, süzme, düzenleme"],["debt","💳","Borçlar","Kartlar, taksitler ve kapanma süresi"],["rec","↻","Düzenli ödemeler","Kira, fatura, abonelik; günü gelince otomatik eklenir"],["set","⚙️","Ayarlar","Maaş, eşitleme, yedek, Excel'e aktarma"]];
+V.menu=()=>{$("#app").innerHTML=`<div class="row"><h1>Menü</h1></div><div class="card" style="padding:4px 14px;margin-top:12px">${MI.map(m=>`<div class="li" data-a="${m[0]=="pay"?"paySheet":"nav"}" data-v="${m[0]}"><span class="ic">${m[1]}</span><div style="flex:1;min-width:0"><b>${m[2]}</b><div class="mu">${m[3]}</div></div><span class="mu">›</span></div>`).join("")}</div>`};
+V.tx=()=>{let p=calc().p;for(let i=0;i<TXQ.off;i++)p=prev(p);TXQ.p=p;
+$("#app").innerHTML=`<div class="row"><h1>Hareketler</h1><button class="p" data-a="sheet">+ Ekle</button></div>
+<div class="row" style="margin:12px 0"><button data-a="txoff" data-v="1" aria-label="Önceki dönem">◀</button><b>${plbl(p)}</b><button data-a="txoff" data-v="-1" ${TXQ.off?"":"disabled"} aria-label="Sonraki dönem">▶</button></div>
+<input id="tq" placeholder="🔍 İşyeri, not ya da tutar ara" value="${esc(TXQ.q)}">
+<select id="tf" style="margin-top:8px">${[["all","Tüm işlemler"],["gider","Giderler"],["gelir","Gelirler"],["none","Zarfsız giderler"],...S.env.map(e=>[e.id,e.emo+" "+e.name])].map(([v,l])=>`<option value="${esc(v)}" ${TXQ.f==v?"selected":""}>${esc(l)}</option>`).join("")}</select><div id="txl"></div>`;txList()};
+function txList(){const st=stat(TXQ.p),q=TXQ.q.trim().toLocaleLowerCase("tr"),f=TXQ.f;
+const l=st.tx.filter(t=>(f=="all"||(f=="gider"&&t.type=="gider")||(f=="gelir"&&t.type=="gelir")||(f=="none"&&t.type=="gider"&&!envOf(t.env))||t.env==f)&&(!q||((t.note||"")+" "+((envOf(t.env)||{}).name||"")+" "+t.amt).toLocaleLowerCase("tr").includes(q)));
+const gi=l.filter(t=>t.type=="gider").reduce((x,t)=>x+t.amt,0),ge=l.filter(t=>t.type=="gelir").reduce((x,t)=>x+t.amt,0);
+$("#txl").innerHTML=`<div class="mu" style="margin:12px 0 8px">${l.length} işlem · gider ${tl(gi)}${ge?" · gelir "+tl(ge):""}</div><div class="card">${l.map(txrow).join("")||'<p class="mu">Kayıt yok.</p>'}</div><div class="mu">Düzenlemek için işleme dokun.</div>`;hydrate()}
+V.debt=()=>{const ob=obl(),ct=S.debts.filter(d=>d.k=="kart").reduce((x,d)=>x+(+d.bal||0),0),r=S.income?ob/S.income:0;
+$("#app").innerHTML=`<h1>Borçlar</h1><div class="mu">Kartlar ve taksitler</div>
+<div class="card" style="margin-top:12px"><div class="grid"><div><div class="mu">Aylık zorunlu ödeme</div><div class="b2 neg">${tl(ob)}</div></div><div><div class="mu">Toplam kart borcu</div><div class="b2">${tl(ct)}</div></div></div>${S.income&&ob?`<div class="mu" style="margin-top:6px">Gelirinin %${Math.round(r*100)}'i borca gidiyor${r>.35?"; bu tehlikeli bölge.":r>.2?"; dikkat.":"."}</div>`:""}</div>
+<div class="card">${S.debts.length?S.debts.map((d,i)=>`<div class="tx" style="align-items:flex-start"><span class="ti">${d.k=="kart"?"💳":"📱"}</span><div class="m" data-a="dupd" data-v="${i}" style="cursor:pointer"><b>${esc(d.name)}</b><span class="mu">${d.k=="kart"?`Asgari ${tl(d.min)}${d.day?" · son gün "+d.day:""}${d.lim?" · limit "+tl(d.lim):""}${d.faiz?" · aylık faiz %"+d.faiz:""}`:`${tl(d.monthly)}/ay · ${d.left} ay kaldı${d.day?" · ayın "+d.day+"'i":""}`}</span>${d.k=="kart"&&payoff(d)?`<div class="mu" style="margin-top:4px">${payoff(d)}</div>`:""}</div>
+<div style="text-align:right;flex:none"><b class="neg">${tl(d.k=="kart"?d.bal:d.monthly*d.left)}</b><div><button class="g" data-a="${d.k=="kart"?"dpay":"dpaid"}" data-v="${i}">${d.k=="kart"?"Ödeme":"Ödendi"}</button><button class="g" data-a="ddel" data-v="${i}" aria-label="Sil">✕</button></div></div></div>`).join(""):'<p class="mu">Henüz borç yok. Aşağıdan ekleyebilirsin.</p>'}</div>
+<div class="card"><b>Elle ekle</b><div class="seg" style="margin-top:10px"><button data-a="dt" data-v="kart" class="${dtype=="kart"?"on":""}">Kart borcu</button><button data-a="dt" data-v="taksit" class="${dtype=="taksit"?"on":""}">Taksit / kredi</button></div>
+<label class="lb">Ad</label><input id="dn" placeholder="${dtype=="kart"?"Örn: Garanti Bonus":"Örn: Telefon taksiti"}">
+<div class="grid"><div><label class="lb">${dtype=="kart"?"Kalan borç (₺)":"Aylık taksit (₺)"}</label><input id="d1" type="number" inputmode="decimal"></div><div><label class="lb">${dtype=="kart"?"Asgari ödeme (₺)":"Kalan ay"}</label><input id="d2" type="number" inputmode="decimal"></div></div>
+<div class="grid"><div><label class="lb">${dtype=="kart"?"Son ödeme günü":"Taksit günü"} (1-31)</label><input id="d3" type="number" min="1" max="31"></div>${dtype=="kart"?`<div><label class="lb">Aylık faiz (%)</label><input id="d4" type="number" inputmode="decimal" placeholder="Örn: 3.5"></div>`:"<div></div>"}</div>
+<button class="p w" data-a="dadd">Ekle</button><div class="mu" style="margin-top:8px">Kapanma süresi, asgari ödemenin sabit kaldığı varsayımıyla hesaplanır; gerçekte asgari ödeme borçla birlikte düştüğü için süre daha da uzar.</div></div>`};
+V.rec=()=>{$("#app").innerHTML=`<h1>Düzenli ödemeler</h1><div class="mu">Kira, fatura, abonelik gibi her ay aynı gün olan kalemler. Günü gelince otomatik işlem olarak eklenir. Maaşını buraya ekleme; o zaten hesaba katılıyor.</div>
+<div class="card" style="margin-top:14px">${S.rec.length?S.rec.map((r,i)=>`<div class="tx"><span class="ti">${r.type=="gelir"?"💵":esc((envOf(r.env)||{emo:"🏷️"}).emo)}</span><div class="m"><b>${esc(r.name)}</b><span class="mu">Her ayın ${r.day}'i · ${r.type=="gelir"?"Gelir":esc((envOf(r.env)||{name:"Zarfsız"}).name)}</span></div><b class="${r.type=="gelir"?"pos":"neg"}">${tl(r.amt)}</b><button class="g" data-a="recdel" data-v="${i}" aria-label="Sil">✕</button></div>`).join(""):'<p class="mu">Henüz düzenli ödeme yok.</p>'}</div>
+<div class="card"><b>Yeni düzenli ödeme</b><div class="seg" style="margin-top:10px"><button data-a="rty" data-v="gider" class="${RTY=="gider"?"on":""}">Gider</button><button data-a="rty" data-v="gelir" class="${RTY=="gelir"?"on":""}">Ek gelir</button></div>
+<label class="lb">Ad</label><input id="rn" placeholder="${RTY=="gider"?"Örn: Kira, Netflix, İnternet":"Örn: Kira geliri"}"><div class="grid"><div><label class="lb">Tutar (₺)</label><input id="ra" type="number" inputmode="decimal"></div><div><label class="lb">Ayın kaçında</label><input id="rd" type="number" min="1" max="31"></div></div>
+${RTY=="gider"?`<label class="lb">Zarf</label><select id="re"><option value="">— Zarfsız —</option>${S.env.map(e=>`<option value="${e.id}">${esc(e.emo)} ${esc(e.name)}</option>`).join("")}</select>`:""}
+<button class="p w" data-a="radd">Ekle</button><div class="mu" style="margin-top:8px">Tutarı değişen faturalarda ortalamayı yaz; işlem eklendikten sonra Hareketler'den gerçek tutarla düzeltirsin.</div></div>`};
+function ctxText(){const c=calc(),P=S.prof||{},L=S.pay.slice(-1)[0],up=upcoming(c);
+const env=S.env.map(e=>`- ${e.name}: bütçe ${Math.round(e.bud)}, devir ${Math.round(e.carry)}, harcanan ${Math.round(c.sp[e.id]||0)}`).join("\n");
+const deb=S.debts.map(d=>d.k=="kart"?`- Kart ${d.name}: kalan borç ${Math.round(d.bal)}, asgari ${Math.round(d.min)}, son gün ${d.day||"?"}, limit ${d.lim||"?"}, aylık faiz %${d.faiz||"?"}`:`- Taksit ${d.name}: aylık ${Math.round(d.monthly)}, ${d.left} ay kaldı`).join("\n");
+const tx=c.tx.slice(0,30).map(t=>`${t.date} ${t.type} ${Math.round(t.amt)} ${t.type=="gider"?((envOf(t.env)||{}).name||"zarfsız"):""} ${t.note||""}`).join("\n");
+let hist="",p=prev(c.p);for(let i=0;i<3;i++){hist+=`${plbl(p)}: ${Math.round(stat(p).out)} TL gider\n`;p=prev(p)}
+return `KİŞİ: ${S.name||"?"}\nHedef: ${P.goal||"-"}\nAlışkanlık/zayıf yön: ${P.habit||"-"}\nNotlar: ${P.note||"-"}\n\nAylık net maaş: ${S.income} TL, maaş günü: ayın ${S.payDay}. günü${L?`\nSon bordro (${L.m}): brüt ${Math.round(L.gross)}, net ${Math.round(L.net)}, kesintiler: ${(L.ded||[]).map(k=>k.ad+" "+Math.round(k.tutar)).join(", ")}`:""}
+Dönem: ${c.lbl}, ${c.el}. gün / ${c.td}, ${c.left} gün kaldı\nBu dönem toplam gider: ${Math.round(c.out)}, zarfsız gider: ${Math.round(c.ns)}\nZarflarda kalan: ${Math.round(c.rem)}, bu hızla dönem sonu zarf bakiyesi: ${Math.round(c.projRem)}\nDağıtılmamış para: ${Math.round(c.pool-c.alloc)}\nMaaşa kadar ödenecek: ${up.map(u=>u.n+" "+Math.round(u.a)).join(", ")||"yok"}
+Önceki dönemler:\n${hist}\nZARFLAR:\n${env||"yok"}\n\nBORÇLAR:\n${deb||"yok"}\n\nDÜZENLİ ÖDEMELER:\n${S.rec.map(r=>`- ${r.name}: ${r.amt} TL, ayın ${r.day}'i`).join("\n")||"yok"}\n\nBU DÖNEMİN İŞLEMLERİ:\n${tx||"yok"}`}
+V.ai=()=>{const P=S.prof||{};
+$("#app").innerHTML=`<h1>🧠 Danışman</h1><div class="mu">Rakamlarını ve senin hakkında yazdıklarını bilir. Dobra konuşur.</div>
+<div class="card" style="margin-top:14px"><b>Beni tanı</b><label class="lb">Hedeflerin</label><input id="pg" value="${esc(P.goal)}" placeholder="Örn: 6 ayda kart borcunu bitirmek">
+<label class="lb">Harcama alışkanlıkların / zayıf yönlerin</label><input id="ph" value="${esc(P.habit)}" placeholder="Örn: Dışarıda yemeği kontrol edemiyorum">
+<label class="lb">Durumun hakkında notlar</label><textarea id="pn" rows="3" placeholder="Örn: Bekarım, ek gelirim yok, kira sabit">${esc(P.note)}</textarea></div>
+<div class="card"><div class="chips" style="margin-top:0"><button class="chip" data-a="ask" data-v="Zarf limitlerimi ve bu dönemki harcamalarımı eleştir. Limitlerim gerçekçi mi?">Limitlerim gerçekçi mi?</button><button class="chip" data-a="ask" data-v="Kart borçlarımı ve taksitlerimi hangi sırayla kapatmalıyım? Faizleri de hesaba katarak somut plan ver.">Borç planı</button><button class="chip" data-a="ask" data-v="Bu dönemin sonunda cebimde ne kalır? Nerede yanlış yapıyorum?">Dönem tahmini</button></div>
+<label class="lb">Kendi sorun</label><textarea id="q" rows="2" placeholder="Bir şey sor"></textarea><button class="p w" data-a="ask2">Sor</button>
+<div id="ans" style="white-space:pre-wrap;margin-top:14px;font-size:15px"></div><div class="mu" style="margin-top:10px">Sorduğunda zarf, borç ve işlem özetin Claude'a gönderilir; fiş fotoğrafları gönderilmez. Kesin finansal tavsiye değildir.</div></div>`};
+V.set=()=>{$("#app").innerHTML=`<h1>Ayarlar</h1><div class="card"><label class="lb" style="margin-top:0">Adın</label><input id="sn" value="${esc(S.name)}">
+<label class="lb">Her maaşta eline geçen net (₺)</label><input id="si" type="number" inputmode="decimal" value="${S.income}">
+<label class="lb">Maaş günü (1-31)</label><input id="sd" type="number" min="1" max="31" value="${S.payDay}"></div>
+<div class="card"><b>🔒 Verilerin nerede?</b><div class="mu" style="margin-top:8px">Tüm verilerin yalnızca bu cihazın tarayıcısında saklanır; hiçbir sunucuya gönderilmez. Tarayıcı verisini silersen ya da başka bir cihaza geçersen kaybolur. Bu yüzden ayda bir yedek al ya da Excel'e aktar.</div></div>
+<div class="card"><b>Dışa aktar ve yedek</b><button class="w" data-a="csv">⬇️ İşlemleri Excel (CSV) olarak indir</button>
+<label class="lb">Yedek metni (fotoğraflar hariç)</label><textarea id="bk" rows="3" placeholder="Yedeği göster'e bas ya da geri yüklemek için buraya yapıştır"></textarea>
+<div class="grid"><button class="w" data-a="exp">Yedeği göster</button><button class="w" data-a="imp">İçe aktar</button></div></div>
+<button class="w" data-a="reset" style="color:var(--neg)">Tüm verileri sil</button>`};
+function setup(){$("#nav").classList.add("hide");$("#app").innerHTML=`<div class="row"><h1 style="font-size:34px;margin-top:20px">✉️ Zarfım</h1><a href="../" class="mu">Tüm projeler</a></div><div class="mu">Maaşını zarflara ayır, harcadıkça zarfın nasıl eridiğini gör.</div>
+<div class="card" style="margin-top:18px"><label class="lb" style="margin-top:0">Adın</label><input id="sn"><label class="lb">Her maaşta eline geçen net (₺)</label><input id="si" type="number" inputmode="decimal"><div class="mu" style="margin-top:4px">Brüt maaşın varsa bordrondaki "net ödenen" tutarı yaz.</div>
+<label class="lb">Maaş günün (1-31)</label><input id="sd" type="number" min="1" max="31" value="1"><label class="lb">Başlangıç zarfları</label>
+<div class="chips" id="chips">${chipsHTML()}</div><label class="lb">Listede olmayan bir zarf ekle</label><div class="row" style="gap:6px"><input id="ce" value="🏷️" style="width:58px;flex:none;text-align:center" aria-label="Emoji"><input id="cn" placeholder="Örn: Evcil hayvan" style="flex:1;min-width:0"><button data-a="addchip" style="flex:none">+ Ekle</button></div>
+<button class="p w" data-a="start">Başla</button></div>`}
+function render(top){if(!S)return setup();$("#nav").classList.remove("hide");const nv=["tx","debt","rec","ai","set"].includes(view)?"menu":view;document.querySelectorAll("nav [data-v]").forEach(b=>b.classList.toggle("on",b.dataset.v==nv));V[view]();if(top!==false)window.scrollTo(0,0);hydrate()}
+function softRender(){const a=document.activeElement;if(a&&$("#app").contains(a)&&/INPUT|TEXTAREA|SELECT/.test(a.tagName)){PR=true;return}render(false)}
+
+// ---------- sayfalar (alt paneller) ----------
+function dlg(title,fields,ok,label,msg){DK={fields,ok};$("#sheet").innerHTML=`<div class="ov" data-a="close"></div><div class="sh"><b style="font-size:18px">${esc(title)}</b>${msg?`<p class="mu" style="font-size:14px">${esc(msg)}</p>`:""}${fields.map(f=>`<label class="lb">${esc(f.l)}</label>${f.t=="select"?`<select id="q_${f.id}">${f.o.map(([v,l])=>`<option value="${esc(v)}" ${v==f.v?"selected":""}>${esc(l)}</option>`).join("")}</select>`:`<input id="q_${f.id}" type="${f.t||"text"}" ${f.t=="number"?'inputmode="decimal"':""} value="${esc(f.v??"")}">`}`).join("")}<div class="grid" style="margin-top:14px"><button data-a="close">Vazgeç</button><button class="p" data-a="dok">${esc(label||"Tamam")}</button></div></div>`;const i=$("#sheet input");if(i)i.focus()}
+const conf=(msg,ok,label)=>dlg("Emin misin?",[],ok,label||"Onayla",msg);
+function shrink(f,mx=900,q=.7){return new Promise((res,rej)=>{const i=new Image(),u=URL.createObjectURL(f);i.onload=()=>{const k=Math.min(1,mx/Math.max(i.width,i.height)),c=document.createElement("canvas");c.width=i.width*k;c.height=i.height*k;c.getContext("2d").drawImage(i,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>res({blob:b,url:c.toDataURL("image/jpeg",.6)}),"image/jpeg",q)};i.onerror=rej;i.src=u})}
+function sheet(eid){const t=eid?S.tx.find(x=>x.id==eid):null;if(eid&&!t)return;SH={ty:t?t.type:"gider",env:t?(envOf(t.env)?t.env:""):((S.env[0]||{}).id||""),img:t?t.img:"",blob:null,edit:eid||null};const im=t?imgOf(t):"";
+$("#sheet").innerHTML=`<div class="ov" data-a="close"></div><div class="sh"><div class="row"><b style="font-size:18px">${t?"İşlemi düzenle":"Yeni işlem"}</b><button class="g" data-a="close">✕</button></div>
+<div class="seg" style="margin-top:10px"><button data-a="ty" data-v="gider" class="${SH.ty=="gider"?"on":""}">Gider</button><button data-a="ty" data-v="gelir" class="${SH.ty=="gelir"?"on":""}">Gelir</button></div>
+<div id="envrow" class="chips ${SH.ty=="gelir"?"hide":""}">${S.env.map(e=>`<button class="chip ${e.id==SH.env?"on":""}" data-a="pick" data-v="${e.id}">${esc(e.emo)} ${esc(e.name)}</button>`).join("")}<button class="chip ${SH.env?"":"on"}" data-a="pick" data-v="">🏷️ Zarfsız</button></div>
+<label class="fl"><input type="file" id="f" accept="image/*" hidden>📷 ${im?"Fotoğrafı değiştir":"Fiş fotoğrafı ekle"}</label><img id="pv" class="${im?"":"hide"}" src="${im}" alt=""><button id="ai" class="w hide" data-a="ai">✨ Fişi AI ile oku</button><div id="st" class="mu"></div>
+<div class="grid"><div><label class="lb">Tutar (₺)</label><input id="a" type="number" inputmode="decimal" step="0.01" value="${t?t.amt:""}"></div><div><label class="lb">Tarih</label><input id="d" type="date" value="${t?t.date:iso(new Date())}"></div></div>
+<label class="lb">Not</label><input id="n" placeholder="Örn: Migros" value="${esc(t?t.note:"")}"><button class="p w" data-a="add">${t?"Kaydet":"Ekle"}</button>${t?`<button class="w" data-a="del" data-v="${t.id}" style="color:var(--neg)">Sil</button>`:""}</div>`}
+function smartSheet(mode){const B=mode=="borc";SM={mode:mode||""};AP=[];
+$("#sheet").innerHTML=`<div class="ov" data-a="close"></div><div class="sh"><div class="row"><b style="font-size:18px">${B?"📄 Borçları doldur":"✨ Akıllı ekle"}</b><button class="g" data-a="close">✕</button></div>
+<div class="mu" style="margin:6px 0 4px">${B?"Findeks raporunu ya da banka uygulamandaki kart ve kredi ekranlarının görüntülerini yükle"+(imgCnt>1?" (en fazla "+imgCnt+" tane)":"")+". Borçları çıkarıp listelerim, sen onaylarsın. Yüklemeden önce TC kimlik no, adres ve telefonu kırp.":"Fiş, kart ekstresi ya da bordro fotoğrafı yükle; ya da ne yaptığını söyle veya yaz. Ben ayırıp doğru yere koyarım, sen onaylarsın."}</div>
+<label class="fl"><input type="file" id="sf" accept="${imgAccept}" ${imgCnt>1?"multiple":""} hidden><span id="sfn">${B?"📄 Rapor / ekran görüntüsü seç":"📷 Fotoğraf çek / yükle"}</span></label><img id="spv" class="hide" alt="" style="max-height:110px;max-width:100%;border-radius:12px;margin-top:8px">
+<textarea id="sm" rows="${B?2:3}" style="margin-top:10px" placeholder="${B?"İsteğe bağlı not, örn: Yapı Kredi kartımın asgarisi 2500":"Örn: Bugün Migros'ta 450 lira, kahveye 80 harcadım. Kartıma 3000 ödeme yaptım."}"></textarea>
+<div class="grid" style="margin-top:8px"><button id="mic" data-a="mic">🎤 Söyle</button><button class="p" data-a="smart">✨ ${B?"Borçları çıkar":"Anla ve hazırla"}</button></div>
+<div id="sst" class="mu" style="margin-top:8px"></div><div id="sres"></div>${B?"":'<button class="w g" data-a="sheet">✍️ Elle ekle</button>'}</div>`}
+function smartRes(r){AP=[];const d0=iso(new Date());
+(r.islemler||[]).forEach(x=>{if(!x)return;const t=+x.tutar,dt=/^\d{4}-\d\d-\d\d$/.test(x.tarih||"")?x.tarih:d0;
+if(x.k=="gider"&&t>0){const e=S.env.find(v=>v.name==x.zarf);AP.push({k:"gider",amt:t,date:dt,env:e?e.id:"",note:x.not||"",on:1})}
+else if(x.k=="gelir"&&t>0)AP.push({k:"gelir",amt:t,date:dt,note:x.not||"",on:1});
+else if(x.k=="borc_odeme"&&t>0)AP.push({k:"borc_odeme",amt:t,date:dt,ad:x.ad||"",di:S.debts.findIndex(v=>v.name==x.ad),on:1});
+else if(x.k=="borc"&&x.ad){const tip=x.tip=="taksit"?"taksit":"kart";AP.push({k:"borc",tip,ad:x.ad,bal:+x.bal||0,min:+x.asgari||0,day:Math.round(+x.gun)||0,monthly:+x.aylik||0,left:Math.round(+x.kalan_ay)||0,lim:+x.limit||0,ex:S.debts.findIndex(v=>v.name==x.ad&&v.k==tip),on:1})}});
+const out=$("#sres"),msg=r.mesaj?`<p style="margin:10px 0 0">💬 ${esc(r.mesaj)}</p>`:"";
+if(r.bordro&&r.bordro.net>0){PB={file:null};out.innerHTML=msg+'<div id="pform"></div>';payForm(r.bordro);return}
+if(!AP.length){out.innerHTML=msg||'<p class="mu">Kayıt çıkaramadım.</p>';return}
+const opt=v=>`<option value="">— Zarfsız —</option>`+S.env.map(e=>`<option value="${e.id}" ${e.id==v?"selected":""}>${esc(e.emo)} ${esc(e.name)}</option>`).join("");
+out.innerHTML=msg+`<div style="margin-top:8px">${AP.map((x,i)=>{
+const lbl=x.k=="gider"?esc(x.note||"Harcama"):x.k=="gelir"?"💵 "+esc(x.note||"Gelir"):x.k=="borc_odeme"?"💳 "+esc(x.ad)+" ödemesi"+(x.di<0?" (kayıtlı borç bulunamadı)":""):(x.tip=="kart"?"💳 Kart: ":"📱 Taksit: ")+esc(x.ad)+" · "+(x.tip=="kart"?"asgari "+tl(x.min)+(x.lim?" · limit "+tl(x.lim):"")+(x.day?" · son gün "+x.day:""):x.left+" ay kaldı")+(x.ex>=0?" · mevcut kaydı günceller":" · yeni kayıt");
+const amt=x.k=="borc"?`<span class="mu" style="flex:none">${x.tip=="kart"?"Borç ₺":"Aylık ₺"}</span><input type="number" inputmode="decimal" data-ap="b" data-i="${i}" value="${x.tip=="kart"?x.bal:x.monthly}" style="flex:1;min-width:0;padding:8px">`:`<input type="number" inputmode="decimal" data-ap="a" data-i="${i}" value="${x.amt}" style="flex:1;min-width:0;padding:8px">`,
+sel=x.k=="gider"?`<select data-ap="e" data-i="${i}" style="flex:1.4;min-width:0;padding:8px">${opt(x.env)}</select>`:"";
+return `<div class="tx" style="align-items:flex-start"><input type="checkbox" data-a="apon" data-v="${i}" ${x.on?"checked":""} style="width:auto;margin-top:4px"><div class="m" style="overflow:visible"><b style="white-space:normal">${lbl}</b>${x.date?`<span class="mu">${dday(x.date)}</span>`:""}<div class="row" style="margin-top:6px;gap:6px">${amt}${sel}</div></div></div>`}).join("")}</div>
+<button class="p w" data-a="apok">Seçilenleri ekle</button><div class="mu" style="margin-top:6px">AI yanlış anlayabilir. Tutarları ve zarfları kontrol et.</div>`}
+function paySheet(){PB={file:null};
+$("#sheet").innerHTML=`<div class="ov" data-a="close"></div><div class="sh"><div class="row"><b style="font-size:18px">📄 Bordro yükle</b><button class="g" data-a="close">✕</button></div>
+<div class="mu" style="margin-top:6px">Yüklemeden önce TC kimlik no ve IBAN'ı kırp ya da kapat. Yalnızca rakamlar saklanır, bordro görüntüsü saklanmaz.</div>
+<label class="fl"><input type="file" id="pf" accept="${imgAccept}" hidden><span id="pfn">📄 Bordro seç (fotoğraf veya PDF)</span></label>
+<button id="pread" class="p w hide" data-a="pread">✨ Bordroyu oku ve analiz et</button><div id="pst" class="mu" style="margin-top:8px"></div><div id="pform"></div></div>`}
+function payForm(r){const ded=(r.kesintiler||[]).filter(k=>k&&k.tutar>0);PB.ded=ded;PB.ek=r.ek||[];PB.yorum=r.yorum||"";
+$("#pform").innerHTML=`<div class="grid"><div><label class="lb">Dönem</label><input id="pm" type="month" value="${esc(r.donem||"")}"></div><div><label class="lb">Brüt (₺)</label><input id="pb" type="number" inputmode="decimal" value="${+r.brut||""}"></div></div>
+<label class="lb">Net – eline geçen (₺)</label><input id="pn2" type="number" inputmode="decimal" value="${+r.net||""}">
+<div class="card" style="margin:12px 0 0;padding:12px">${ded.map(k=>`<div class="row"><span>${esc(k.ad)}</span><b>${tl(k.tutar)}</b></div>`).join("")||'<span class="mu">Kesinti kalemi okunamadı.</span>'}</div>
+${r.yorum?`<p style="margin:12px 0 0">💬 ${esc(r.yorum)}</p>`:""}
+<div class="mu" style="margin-top:8px">AI yanlış okuyabilir. Brüt ve net tutarları bordroyla karşılaştır.</div><button class="p w" data-a="psave">Kaydet ve net maaşımı güncelle</button>`}
+
+// ---------- AI ----------
+function getSample(){if(sample)return Promise.resolve(sample);if(!SP)SP=(async()=>{try{if(!window.claude||typeof claude.use!="function"){AIWHY="noclaude";return null}const s=await claude.use("sample");if(!s){AIWHY="null";return null}sample=s;AIWHY="";
+try{const l=await s.limits();canAI=!!l.images;if(l.images){imgAccept=(l.images.mediaTypes||[]).join(",")||"image/*";imgMax=l.images.maxInputBytes||4e6;imgCnt=l.images.maxCount||1}}catch(e){}return s}catch(e){AIWHY="err";return null}})().then(r=>{if(!r)SP=null;return r});return SP}
+const aiMsg=()=>AIWHY=="noclaude"?"AI yalnızca uygulama Claude'un içinden açıldığında çalışır. Bağlantıyı Claude uygulamasında ya da claude.ai'da, oturum açıkken aç.":"AI şu an başlatılamadı. Claude'da oturumunun açık olduğundan emin ol, sayfayı yenileyip tekrar dene.";
+
+// ---------- eylemler ----------
+const A={
+nav:t=>{view=t.dataset.v;if(view=="tx")TXQ.off=0;A.close();render()},
+chip:t=>{const d=CH[+t.dataset.v];if(d){d.on=!d.on;t.classList.toggle("on",d.on)}},
+addchip:()=>{const n=$("#cn").value.trim();if(!n){toast("Zarf adını yaz.");return}if(CH.some(d=>d.n.toLocaleLowerCase("tr")==n.toLocaleLowerCase("tr"))){toast("Bu zarf zaten listede.");return}CH.push({n,e:$("#ce").value.trim()||"🏷️",w:3,on:true});$("#chips").innerHTML=chipsHTML();$("#cn").value="";$("#ce").value="🏷️"},
+start:()=>{const n=$("#sn").value.trim(),i=parseFloat($("#si").value),d=parseInt($("#sd").value),ch=CH.filter(x=>x.on);
+if(!(i>0)||!(d>=1&&d<=31)||!ch.length){toast("Net maaş, maaş günü (1-31) ve en az bir zarf gerekli.");return}
+S={name:n,income:i,payDay:d,env:ch.map((x,k)=>({id:uid(),name:x.n,emo:x.e,w:x.w,bud:0,carry:0,roll:true,h:H[k%12]})),tx:[],debts:[],free:0,pay:[],rec:[],prof:{}};S.cs=iso(per(new Date()).s);save();view="env";render();toast("Şimdi maaşını zarflara dağıt: ✨ Önerilen dağılım ile başlayabilirsin.")},
+sheet:()=>sheet(),edit:t=>sheet(t.dataset.v),
+camera:async()=>{if(!(await getSample())){toast(aiMsg());sheet();return}smartSheet()},
+debtScan:async()=>{if(!(await getSample())){toast(aiMsg());return}if(!canAI){toast("Bu görünümde belge okuma desteklenmiyor.");return}smartSheet("borc")},
+close:()=>{if(REC){try{REC.stop()}catch(e){}}$("#sheet").innerHTML="";DK=null},
+ty:t=>{SH.ty=t.dataset.v;document.querySelectorAll(".seg [data-a=ty]").forEach(b=>b.classList.toggle("on",b==t));$("#envrow").classList.toggle("hide",SH.ty!="gider")},
+pick:t=>{SH.env=t.dataset.v;document.querySelectorAll("#envrow .chip").forEach(b=>b.classList.toggle("on",b==t))},
+add:()=>{const a=parseFloat($("#a").value);if(!(a>0)){toast("Geçerli bir tutar girin.");return}
+const o={type:SH.ty,env:SH.ty=="gider"?(SH.env||null):null,amt:a,date:$("#d").value||iso(new Date()),note:$("#n").value.trim(),img:SH.img||""};
+if(SH.edit){const t=S.tx.find(x=>x.id==SH.edit);if(t){if(o.img!==t.img&&t.img=="@")delete IMGC[t.id];Object.assign(t,o)}}else S.tx.push({id:uid(),...o});save();A.close();render(false)},
+del:t=>conf("Bu işlem silinecek.",()=>{S.tx=S.tx.filter(x=>x.id!=t.dataset.v);save();render(false)},"Sil"),
+zoom:t=>{const x=S.tx.find(y=>y.id==t.dataset.v);if(!x)return;const s=imgOf(x);if(!s)return;$("#big img").src=s;$("#big").classList.remove("hide")},unzoom:()=>$("#big").classList.add("hide"),
+ai:async()=>{const st=$("#st");if(!(await getSample())){st.textContent="⚠️ "+aiMsg();return}st.textContent="Okunuyor…";try{const r=await sample.json(`Bu bir fiş/fatura fotoğrafı. Sadece JSON döndür: {"amount":toplam tutar (sayı),"date":"YYYY-AA-GG" ya da null,"merchant":"işyeri adı","envelope":"${S.env.map(e=>e.name).join(" | ")} içinden en uygun biri ya da null"}`,{images:SH.blob,modelTier:"quick"});
+if(r.amount)$("#a").value=r.amount;if(r.date)$("#d").value=r.date;if(r.merchant)$("#n").value=r.merchant;const e=S.env.find(x=>x.name==r.envelope);if(e&&SH.ty=="gider")A.pick(document.querySelector(`#envrow [data-v="${e.id}"]`));
+st.textContent="Okundu. Değerleri kontrol et, AI hata yapabilir."}catch(e){st.textContent=e&&e.code=="not_granted"?"İzin verilmedi. Elle girebilirsin.":"Okunamadı. Elle girebilirsin."}},
+suggest:()=>conf("Tüm zarf bütçeleri, net maaşına göre önerilen oranlarla değişecek.",()=>{S.env.forEach(e=>e.bud=Math.round(S.income*(e.w||3)/100/10)*10);save();render(false)}),
+editenv:t=>{const e=envOf(t.dataset.v);if(!e)return;dlg(e.name,[{id:"n",l:"Ad",v:e.name},{id:"e",l:"Emoji",v:e.emo},{id:"b",l:"Bu dönem bütçesi (₺)",t:"number",v:e.bud}],v=>{const b=parseFloat(v.b);if(!v.n.trim()||!(b>=0)){toast("Ad ve geçerli bir tutar gerekli.");return false}e.name=v.n.trim();e.emo=v.e.trim()||"🏷️";e.bud=b;save();render(false)},"Kaydet")},
+move:()=>{if(S.env.length<2){toast("Aktarmak için en az iki zarf gerekli.");return}const o=S.env.map(e=>[e.id,e.emo+" "+e.name]);
+dlg("Zarflar arası aktar",[{id:"f",l:"Nereden",t:"select",o,v:S.env[0].id},{id:"t",l:"Nereye",t:"select",o,v:S.env[1].id},{id:"a",l:"Tutar (₺)",t:"number"}],v=>{const a=parseFloat(v.a),f=envOf(v.f),to=envOf(v.t);if(!(a>0)||!f||!to||f===to){toast("İki farklı zarf ve geçerli bir tutar seç.");return false}f.bud-=a;to.bud+=a;save();render(false);toast(`${tl(a)} ${f.name} → ${to.name} aktarıldı.`)},"Aktar","Bütçe bir zarftan diğerine taşınır; toplam değişmez.")},
+delenv:t=>conf("Zarf silinecek. İşlemleri 'Zarfsız' kalır ve dağıtılmamış paradan düşer.",()=>{S.env=S.env.filter(x=>x.id!=t.dataset.v);save();render(false)},"Sil"),
+addenv:()=>dlg("Yeni zarf",[{id:"n",l:"Zarf adı"},{id:"e",l:"Emoji",v:"🏷️"},{id:"b",l:"Bütçe (₺)",t:"number",v:0}],v=>{const n=v.n.trim();if(!n){toast("Zarf adı gerekli.");return false}S.env.push({id:uid(),name:n,emo:v.e.trim()||"🏷️",w:3,bud:parseFloat(v.b)||0,carry:0,roll:true,h:H[S.env.length%12]});save();render(false)},"Ekle"),
+roll:t=>{const e=envOf(t.dataset.v);if(e){e.roll=!e.roll;save();render(false)}},
+txoff:t=>{TXQ.off=Math.max(0,TXQ.off+ +t.dataset.v);render(false)},
+askan:()=>{view="ai";render();$("#q").value="Analiz rakamlarıma bak: en büyük 3 sorunumu ve her biri için bu dönem yapabileceğim somut bir adımı söyle.";A.ask2()},
+dt:t=>{dtype=t.dataset.v;render(false)},
+dadd:()=>{const n=$("#dn").value.trim(),a=parseFloat($("#d1").value),b=parseFloat($("#d2").value),day=parseInt($("#d3").value)||0;if(!n||!(a>=0)||!(b>=0)){toast("Ad ve iki tutar alanı gerekli.");return}
+S.debts.push(dtype=="kart"?{k:"kart",name:n,bal:a,min:b,day,faiz:parseFloat($("#d4").value)||0}:{k:"taksit",name:n,monthly:a,left:Math.round(b),day});save();render(false)},
+dupd:t=>{const d=S.debts[+t.dataset.v];if(!d)return;const K=d.k=="kart";
+dlg(d.name,K?[{id:"n",l:"Ad",v:d.name},{id:"b",l:"Kalan borç (₺)",t:"number",v:d.bal},{id:"m",l:"Asgari ödeme (₺)",t:"number",v:d.min},{id:"d",l:"Son ödeme günü",t:"number",v:d.day||""},{id:"l",l:"Limit (₺)",t:"number",v:d.lim||""},{id:"f",l:"Aylık faiz (%)",t:"number",v:d.faiz||""}]:[{id:"n",l:"Ad",v:d.name},{id:"b",l:"Aylık taksit (₺)",t:"number",v:d.monthly},{id:"m",l:"Kalan ay",t:"number",v:d.left},{id:"d",l:"Taksit günü",t:"number",v:d.day||""}],
+v=>{const b=parseFloat(v.b),m=parseFloat(v.m);if(!v.n.trim()||!(b>=0)||!(m>=0)){toast("Ad ve tutarlar gerekli.");return false}d.name=v.n.trim();d.day=parseInt(v.d)||0;
+if(K){d.bal=b;d.min=m;d.lim=parseFloat(v.l)||0;d.faiz=parseFloat(v.f)||0}else{d.monthly=b;d.left=Math.round(m)}save();render(false)},"Kaydet")},
+dpay:t=>{const d=S.debts[+t.dataset.v];if(!d)return;dlg(d.name+" ödemesi",[{id:"a",l:"Ödenen tutar (₺)",t:"number",v:d.min||""}],v=>{const a=parseFloat(v.a);if(!(a>0)){toast("Geçerli bir tutar girin.");return false}d.bal=Math.max(0,d.bal-a);S.tx.push({id:uid(),type:"gider",env:null,amt:a,date:iso(new Date()),note:"Borç ödemesi: "+d.name,img:""});save();render(false);toast("Borç düşüldü ve ödeme zarfsız gider olarak kaydedildi.")},"Kaydet","Kart borcun bu kadar azalır; ödeme bu dönemin parasından çıktığı için zarfsız gider olarak da kaydedilir.")},
+dpaid:t=>{const i=+t.dataset.v,d=S.debts[i];if(!d)return;conf(`${d.name} için ${tl(d.monthly)} taksit ödendi olarak işlenecek.`,()=>{S.tx.push({id:uid(),type:"gider",env:null,amt:d.monthly,date:iso(new Date()),note:"Taksit: "+d.name,img:""});d.left--;if(d.left<=0){S.debts.splice(i,1);toast("🎉 Bu taksit bitti!")}save();render(false)},"Ödendi")},
+ddel:t=>conf("Kayıt silinecek.",()=>{S.debts.splice(+t.dataset.v,1);save();render(false)},"Sil"),
+rty:t=>{RTY=t.dataset.v;render(false)},
+radd:()=>{const n=$("#rn").value.trim(),a=parseFloat($("#ra").value),d=parseInt($("#rd").value);if(!n||!(a>0)||!(d>=1&&d<=31)){toast("Ad, tutar ve gün (1-31) gerekli.");return}
+const now=new Date(),cur=mk(now.getFullYear(),now.getMonth()),due=Math.min(d,new Date(now.getFullYear(),now.getMonth()+1,0).getDate());
+S.rec.push({id:uid(),name:n,amt:a,day:d,type:RTY,env:RTY=="gider"?($("#re").value||null):null,last:due<=now.getDate()?cur:mk(now.getFullYear(),now.getMonth()-1)});save();recRun();render(false);toast("Eklendi. "+(due<=now.getDate()?"Bu ayki ödeme günü geçtiği için ilk kayıt gelecek ay düşecek.":"Ayın "+d+"'inde otomatik eklenecek."))},
+recdel:t=>conf("Düzenli ödeme silinecek. Daha önce eklenmiş işlemler kalır.",()=>{S.rec.splice(+t.dataset.v,1);save();render(false)},"Sil"),
+ask:t=>{$("#q").value=t.dataset.v;A.ask2()},
+ask2:async()=>{const out=$("#ans");if(!(await getSample())){out.textContent="⚠️ "+aiMsg();return}const q=$("#q").value.trim();if(!q){toast("Bir soru yaz.");return}
+S.prof={goal:$("#pg").value.trim(),habit:$("#ph").value.trim(),note:$("#pn").value.trim()};save();out.textContent="Düşünüyor…";
+const pr=`Sen kişisel bir bütçe danışmanısın. Türkçe, doğrudan ve somut rakamlarla konuş; en fazla yaklaşık 220 kelime. Pohpohlama yok: hataları, gerçekçi olmayan limitleri ve kaçınılan gerçekleri açıkça söyle, güçlü yanı kısaca belirt. Veri yetersizse bunu söyle, rakam uydurma. Yatırım ya da hukuk tavsiyesi verme. Para birimi TL.\n\n${ctxText()}\n\nSORU: ${q}`;
+try{const r=await sample(pr,{onText:({text})=>{out.textContent=text}});out.textContent=r.text}catch(e){out.textContent=e&&e.code=="not_granted"?"İzin verilmedi.":e&&e.code=="rate_limited"?"Çok sık soruldu, biraz bekleyip tekrar dene.":"Cevap alınamadı, biraz sonra tekrar dene."}},
+mic:()=>{if(REC){REC.stop();return}const R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R){toast("Bu tarayıcı sesi yazıya çeviremiyor. Klavyendeki 🎤 düğmesini kullan.");return}
+const ta=$("#sm"),base=ta.value.trim(),r=new R();REC=r;r.lang="tr-TR";r.interimResults=true;
+r.onresult=e=>{let t="";for(const x of e.results)t+=x[0].transcript;ta.value=(base?base+" ":"")+t};
+r.onerror=e=>toast(e.error=="not-allowed"||e.error=="service-not-allowed"?"Mikrofon izni verilmedi. Klavyendeki 🎤 düğmesini kullan.":"Ses alınamadı. Klavyendeki 🎤 düğmesini kullan.");
+r.onend=()=>{REC=null;const m=$("#mic");if(m){m.classList.remove("on");m.textContent="🎤 Söyle"}};
+try{r.start();$("#mic").classList.add("on");$("#mic").textContent="⏹ Durdur"}catch(e){REC=null;toast("Ses başlatılamadı.")}},
+smart:async()=>{if(!(await getSample())){$("#sst").textContent="⚠️ "+aiMsg();return}const text=$("#sm").value.trim(),hasImg=!!(SM.blobs&&SM.blobs.length);if(!text&&!hasImg){toast("Bir fotoğraf yükle ya da ne yaptığını yaz/söyle.");return}
+if(hasImg&&!canAI){toast("Bu ortamda fotoğraf okunamıyor; yazarak dene.");return}if(REC){try{REC.stop()}catch(e){}}
+const st=$("#sst");st.textContent=hasImg?"Okunuyor… yarım dakika kadar sürebilir.":"Anlıyorum…";$("#sres").innerHTML="";
+const pr=`Bugünün tarihi ${iso(new Date())}. Kullanıcı bir bütçe uygulamasına kayıt eklemek istiyor. Girdi: ${hasImg?"ekteki görsel(ler) ya da PDF (fiş, kart ekstresi, bordro, Findeks raporu, banka ekranı veya başka bir belge olabilir) ve ":""}${text?"şu not: «"+text+"»":"not yok"}.\nZarflar: ${S.env.map(e=>e.name).join(", ")||"yok"}. Mevcut borçlar: ${S.debts.map(d=>d.name).join(", ")||"yok"}.\nSadece JSON döndür:\n{"belge":"fis|ekstre|bordro|findeks|banka|ses_metin|diger","mesaj":"kısa Türkçe özet, en fazla 25 kelime","islemler":[{"k":"gider","tutar":sayı,"tarih":"YYYY-AA-GG","zarf":"zarf adı ya da null","not":"işyeri veya açıklama"},{"k":"gelir","tutar":sayı,"tarih":"YYYY-AA-GG","not":"..."},{"k":"borc_odeme","ad":"mevcut borç adı","tutar":sayı,"tarih":"YYYY-AA-GG"},{"k":"borc","tip":"kart|taksit","ad":"...","bal":kalan borç,"asgari":sayı,"gun":son ödeme ya da taksit günü ya da 0,"aylik":taksit tutarı,"kalan_ay":sayı,"limit":sayı ya da 0}],"bordro":null ya da {"donem":"YYYY-AA","brut":sayı,"net":sayı,"kesintiler":[{"ad":"","tutar":sayı}]}}\nKurallar: Tarih söylenmediyse bugünü kullan; dün, geçen cuma gibi ifadeleri hesapla. Tutarlar TL, noktalı ondalık, binlik ayracı yok. Zarf adını yalnızca verilen listeden seç, uygun yoksa null. Bir fişte tek gider yaz (toplam tutar). Kart ekstresinde her harcamayı ayrı gider yap; ekstrede toplam borç ya da asgari ödeme bilgisi varsa ayrıca bir borc kaydı ekle. Belge bordroysa islemler boş, bordro dolu olsun. Emin olmadığın alanı uydurma, null bırak. Anlayamazsan islemler boş dizi olsun ve mesajda nedenini yaz.${SM.mode=="borc"?DEBTRULE:""}`;
+try{const r=await sample.json(pr,hasImg?{images:SM.blobs}:{modelTier:"quick"});st.textContent="";smartRes(r)}catch(e){st.textContent=e&&e.code=="not_granted"?"İzin verilmedi.":"Anlaşılamadı. Daha net yaz ya da daha net bir fotoğraf dene."}},
+apon:t=>{if(AP[+t.dataset.v])AP[+t.dataset.v].on=t.checked?1:0},
+apok:()=>{let n=0;const d0=iso(new Date()),ng=AP.filter(y=>y.on&&y.k=="gider").length;
+AP.forEach(x=>{if(!x.on)return;
+if(x.k=="gider"&&x.amt>0){S.tx.push({id:uid(),type:"gider",env:x.env||null,amt:x.amt,date:x.date||d0,note:x.note,img:ng==1&&SM.img?SM.img:""});n++}
+else if(x.k=="gelir"&&x.amt>0){S.tx.push({id:uid(),type:"gelir",env:null,amt:x.amt,date:x.date||d0,note:x.note,img:""});n++}
+else if(x.k=="borc_odeme"&&x.amt>0){const d=S.debts[x.di];if(d&&d.k=="kart")d.bal=Math.max(0,d.bal-x.amt);S.tx.push({id:uid(),type:"gider",env:null,amt:x.amt,date:x.date||d0,note:"Borç ödemesi: "+x.ad,img:""});n++}
+else if(x.k=="borc"){const ex=S.debts.find(v=>v.name==x.ad&&v.k==x.tip);if(ex){if(x.tip=="kart"){ex.bal=x.bal;if(x.min)ex.min=x.min;if(x.day)ex.day=x.day;if(x.lim)ex.lim=x.lim}else{ex.monthly=x.monthly||ex.monthly;ex.left=x.left||ex.left;if(x.day)ex.day=x.day}}
+else S.debts.push(x.tip=="kart"?{k:"kart",name:x.ad,bal:x.bal,min:x.min,day:x.day,lim:x.lim,faiz:0}:{k:"taksit",name:x.ad,monthly:x.monthly,left:x.left,day:x.day});n++}});
+if(!n){toast("Eklenecek bir şey seçilmedi.");return}save();A.close();toast(n+" kayıt eklendi.");render(false)},
+paySheet:()=>paySheet(),
+pread:async()=>{const st=$("#pst");if(!(await getSample())){st.textContent="⚠️ "+aiMsg();return}if(!canAI){st.textContent="Bu görünümde belge okuma desteklenmiyor.";return}st.textContent="Okunuyor… yarım dakika kadar sürebilir.";
+let b=PB.file;try{if(b.type.startsWith("image/")&&b.size>imgMax)b=(await shrink(b,2000,.85)).blob}catch(e){}
+const pv=S.pay.slice(-1)[0],
+pr=`Bu bir Türkiye maaş bordrosu (fotoğraf veya PDF). Sadece JSON döndür, başka metin yazma:\n{"donem":"YYYY-AA" ya da null,"brut":brüt toplam kazanç (sayı),"net":ele geçen net ödenecek tutar (sayı),"kesintiler":[{"ad":"kalem adı","tutar":sayı}],"ek":[{"ad":"net dışı ek ödeme adı","tutar":sayı}],"yorum":"..."}\nKurallar: sayılar noktalı ondalık, binlik ayracı yok. kesintiler: SGK işçi payı, işsizlik sigortası, gelir vergisi, damga vergisi gibi kalemler. Görünmeyen alanı null bırak, tahmin etme. yorum: ${pv?`önceki bordro ${JSON.stringify({m:pv.m,brut:pv.gross,net:pv.net,kesintiler:pv.ded})} ile karşılaştır; net ve kesinti değişimini ve nedenini (özellikle gelir vergisi diliminin değişmesi) en fazla 60 kelimeyle Türkçe açıkla.`:"önceki bordro yok; kesintilerin brüte oranını ve yıl içinde gelir vergisi dilimi yükseldikçe netin düşebileceğini en fazla 40 kelimeyle açıkla."}`;
+try{const r=await sample.json(pr,{images:b});payForm(r);st.textContent=""}catch(e){st.textContent=e&&e.code=="not_granted"?"İzin verilmedi.":"Okunamadı. Daha net bir fotoğraf ya da PDF dene."}},
+psave:()=>{const m=$("#pm").value,b=parseFloat($("#pb").value),n=parseFloat($("#pn2").value);if(!m||!(b>0)||!(n>0)||n>b){toast("Dönem, brüt ve net tutarları kontrol et (net, brütten büyük olamaz).");return}
+S.pay=S.pay.filter(x=>x.m!=m);S.pay.push({m,gross:b,net:n,ded:PB.ded||[],ek:PB.ek||[],note:PB.yorum||""});S.pay.sort((x,y)=>x.m.localeCompare(y.m));
+const latest=S.pay[S.pay.length-1].m==m;if(latest)S.income=n;save();A.close();toast(latest?"Kaydedildi. Net maaşın "+tl(n)+" olarak güncellendi.":"Kaydedildi. Daha yeni bir bordro olduğu için net maaşın değiştirilmedi.");render(false)},
+csv:()=>{const q=v=>'"'+String(v).replace(/"/g,'""')+'"',rows=[["Tarih","Tür","Zarf","Tutar","Not"]].concat(S.tx.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(t=>[t.date,t.type=="gelir"?"Gelir":"Gider",t.type=="gelir"?"":((envOf(t.env)||{}).name||"Zarfsız"),String(t.amt).replace(".",","),t.note||""]));
+const u=URL.createObjectURL(new Blob(["\ufeff"+rows.map(r=>r.map(q).join(";")).join("\r\n")],{type:"text/csv;charset=utf-8"})),a=document.createElement("a");a.href=u;a.download="zarfim-islemler.csv";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)},
+exp:()=>{const b=$("#bk");b.value=JSON.stringify({...S,tx:S.tx.map(t=>({...t,img:""}))});b.select()},
+imp:()=>{let o;try{o=JSON.parse($("#bk").value);if(!o||!Array.isArray(o.env)||!Array.isArray(o.tx))throw 0}catch(e){toast("Geçersiz yedek metni.");return}conf("Mevcut veriler bu yedekle değiştirilecek.",()=>{S=o;norm();save();render()})},
+reset:()=>conf("Bu cihazdaki TÜM veriler silinecek. Bu geri alınamaz.",async()=>{const imgs=[...IMGS],ms=Object.keys(LS.m);S=null;try{localStorage.removeItem("zk2")}catch(e){}
+if(DB){try{const ref=ST();for(const k of ms)await ref.collection("tx").doc(k).delete();for(const id of imgs)await ref.collection("img").doc(id).delete();await ref.delete()}catch(e){toast("Buluttaki bazı veriler silinemedi.")}}LS={st:"",m:{}};IMGS.clear();IMGC={};render()},"Hepsini sil"),
+dok:()=>{const d=DK;if(!d)return;const v={};d.fields.forEach(f=>v[f.id]=$("#q_"+f.id).value);if(d.ok(v)!==false)A.close()}};
+
+// ---------- olaylar ----------
+document.addEventListener("click",e=>{const t=e.target.closest("[data-a]");if(!t||!A[t.dataset.a])return;if(t.tagName=="INPUT"&&t.type=="checkbox"){A[t.dataset.a](t,e);return}A[t.dataset.a](t,e)});
+document.addEventListener("input",e=>{if(e.target.id=="tq"){TXQ.q=e.target.value;txList()}});
+document.addEventListener("change",async e=>{const i=e.target;
+if(i.dataset&&i.dataset.ap){const it=AP[+i.dataset.i];if(it){if(i.dataset.ap=="a")it.amt=parseFloat(i.value)||0;else if(i.dataset.ap=="e")it.env=i.value;else if(i.dataset.ap=="b"){const v=parseFloat(i.value)||0;if(it.tip=="kart")it.bal=v;else it.monthly=v}}}
+else if(i.id=="tf"){TXQ.f=i.value;txList()}
+else if(i.id=="sf"&&i.files.length){const fs=[...i.files].slice(0,imgCnt),md=SM.mode;SM={mode:md,blobs:[]};$("#sfn").textContent="⏳ Hazırlanıyor…";
+try{for(const f of fs){if(f.type.startsWith("image/")){SM.blobs.push((await shrink(f,1600,.85)).blob);if(!SM.img)SM.img=(await shrink(f,900,.6)).url}else SM.blobs.push(f)}
+if(SM.img){$("#spv").src=SM.img;$("#spv").classList.remove("hide")}$("#sfn").textContent="✔ "+(fs.length>1?fs.length+" dosya":fs[0].name)+(i.files.length>fs.length?" (ilk "+fs.length+" tanesi alındı)":"")}catch(e){SM={mode:md};$("#sfn").textContent="📷 Fotoğraf çek / yükle";toast("Dosya okunamadı.")}}
+else if(i.id=="pf"&&i.files[0]){PB.file=i.files[0];$("#pfn").textContent="✔ "+PB.file.name;$("#pread").classList.remove("hide")}
+else if(i.id=="f"&&i.files[0]){try{const r=await shrink(i.files[0]);SH.img=r.url;SH.blob=r.blob;$("#pv").src=r.url;$("#pv").classList.remove("hide");getSample().then(s=>{if(s&&canAI)$("#ai")&&$("#ai").classList.remove("hide")})}catch(e){toast("Fotoğraf okunamadı.")}}
+else if(S&&view=="ai"&&["pg","ph","pn"].includes(i.id)){S.prof={goal:$("#pg").value.trim(),habit:$("#ph").value.trim(),note:$("#pn").value.trim()};save()}
+else if(S&&view=="set"&&["sn","si","sd"].includes(i.id)){if(i.id=="sn")S.name=i.value.trim();if(i.id=="si"&&parseFloat(i.value)>0)S.income=parseFloat(i.value);if(i.id=="sd"&&i.value>=1&&i.value<=31){S.payDay=parseInt(i.value);S.cs=iso(per(new Date()).s)}save();toast("Kaydedildi.")}});
+document.addEventListener("focusout",()=>{if(PR)setTimeout(()=>{const a=document.activeElement;if(PR&&!(a&&$("#app").contains(a)&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))){PR=false;render(false)}},400)});
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState=="visible"&&S){roll();recRun();softRender()}});
+
+// ---------- başlat ----------
+getSample=()=>Promise.resolve(null);
+if(S){roll();recRun()}render();
+if("serviceWorker"in navigator)window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{})});
+</script></body></html>
