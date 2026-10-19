@@ -51,7 +51,7 @@
       {"id": "veranda", "ad": "Veranda & teras", "emoji": "⛱️", "anahtar": ["patio", "hammock", "outdoor rug", "fire pit", "parasol"]}
     ]},
     {"id": "elektronik", "ad": "Elektronik ve Teknoloji", "emoji": "📱", "nisler": [
-      {"id": "telefon-aks", "ad": "Telefon aksesuarı", "emoji": "📱", "anahtar": ["phone case", "charger", "magsafe", "screen protector", "power bank"]},
+      {"id": "telefon-aks", "ad": "Telefon aksesuarı", "emoji": "📱", "anahtar": ["phone case", "charger", "magsafe", "screen protector", "power bank", "phone mount", "phone holder", "phone stand"]},
       {"id": "ses", "ad": "Ses", "emoji": "🎧", "anahtar": ["earbuds", "headphones", "speaker", "soundbar"]},
       {"id": "akilli-ev", "ad": "Akıllı ev", "emoji": "🏠", "anahtar": ["smart plug", "security camera", "smart bulb", "doorbell"]},
       {"id": "kamera", "ad": "Kamera & çekim", "emoji": "📷", "anahtar": ["ring light", "tripod", "gimbal", "lens", "microphone"]},

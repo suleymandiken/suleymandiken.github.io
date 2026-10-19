@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Nişbul · Shopify ürün araştırma</title>
-<meta name="description" content="Yeni açılan Shopify mağazalarını ve ürünlerini nişe, fiyata, ülkeye ve dile göre tara.">
+<meta name="description" content="Her gün yeni açılan Shopify mağazalarından toplanan gerçek ürün verisiyle niş ve trend araştırması.">
+<meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23e8542f'/%3E%3Ccircle cx='44' cy='44' r='20' fill='none' stroke='white' stroke-width='9'/%3E%3Cpath d='M58 58l18 18' stroke='white' stroke-width='10' stroke-linecap='round'/%3E%3C/svg%3E">
@@ -14,48 +15,53 @@
 <a class="skip" href="#ana">İçeriğe geç</a>
 <header class="ust">
   <a class="logo" href="#urunler"><span class="logo-ic" aria-hidden="true"></span>Nişbul</a>
-  <nav class="sekmeler" aria-label="Bölümler">
+  <nav class="sekmeler" id="sekmeler" aria-label="Bölümler" hidden>
     <a href="#urunler" data-sekme="urunler">Ürünler</a>
+    <a href="#trendler" data-sekme="trendler">Trendler</a>
     <a href="#magazalar" data-sekme="magazalar">Mağazalar</a>
     <a href="#bulucu" data-sekme="bulucu">Bulucu</a>
     <a href="#kaydedilenler" data-sekme="kaydedilenler">Kaydedilenler <i id="kayitSayi">0</i></a>
+    <a href="#yonetim" data-sekme="yonetim" id="yonetimSekme" hidden>Yönetim</a>
   </nav>
+  <div class="hesap" id="hesap" hidden></div>
 </header>
 
-<div class="uyari" id="demoUyari" hidden>
-  <b>Örnek veri.</b> Mağaza ve ürünler kurgusaldır, arayüzü denemen için üretildi. Gerçek mağazaları taramak için <code>nisbul/araclar/tara.py</code> betiğini çalıştırıp çıkan <code>data.json</code> dosyasını bu klasöre koy.
-</div>
+<div id="ekran"></div>
 
-<section class="ozet" aria-label="Özet">
-  <h1>Yeni Shopify mağazalarında<br>ne satıldığını gör.</h1>
-  <div class="istatistik" id="istatistik"></div>
-</section>
+<div id="uygulama" hidden>
+  <section class="ozet" aria-label="Özet">
+    <h1>Yeni Shopify mağazalarında<br>ne satıldığını gör.</h1>
+    <div class="istatistik" id="istatistik"></div>
+  </section>
 
-<div class="hizli" id="hizli" role="list" aria-label="Kategoriler"></div>
+  <div class="hizli" id="hizli" role="list" aria-label="Kategoriler"></div>
 
-<div class="duzen">
-  <aside class="filtre" id="filtre" aria-label="Filtreler">
-    <div class="filtre-bas"><b>Filtreler</b><button class="metin-btn" id="sifirla" type="button">Tümünü Sıfırla</button><button class="kapat" id="filtreKapat" type="button" aria-label="Filtreleri kapat">✕</button></div>
-    <div class="filtre-govde" id="filtreGovde"></div>
-    <div class="filtre-alt"><button class="birincil" id="uygula" type="button">Filtreleri Uygula</button><button class="ikincil" id="temizle" type="button">Tümünü Temizle</button></div>
-  </aside>
+  <div class="duzen">
+    <aside class="filtre" id="filtre" aria-label="Filtreler">
+      <div class="filtre-bas"><b>Filtreler</b><button class="metin-btn" id="sifirla" type="button">Tümünü Sıfırla</button><button class="kapat" id="filtreKapat" type="button" aria-label="Filtreleri kapat">✕</button></div>
+      <div class="filtre-govde" id="filtreGovde"></div>
+      <div class="filtre-alt"><button class="birincil" id="uygula" type="button">Filtreleri Uygula</button><button class="ikincil" id="temizle" type="button">Tümünü Temizle</button></div>
+    </aside>
 
-  <main id="ana" tabindex="-1">
-    <div class="arac-cubugu" id="aracCubugu">
-      <button class="filtre-ac" id="filtreAc" type="button">Filtreler <i id="filtreSayi" hidden></i></button>
-      <input class="ara" id="fAra" type="search" placeholder="Ürün ya da mağaza ara" aria-label="Ara" autocomplete="off">
-      <label class="sirala"><span>Sırala</span><select id="fSirala"></select></label>
-    </div>
-    <div class="aktifler" id="aktifler"></div>
-    <p class="sonuc" id="sonucSayi" aria-live="polite"></p>
-    <div id="gorunum"></div>
-  </main>
+    <main id="ana" tabindex="-1">
+      <div class="arac-cubugu" id="aracCubugu">
+        <button class="filtre-ac" id="filtreAc" type="button">Filtreler <i id="filtreSayi" hidden></i></button>
+        <input class="ara" id="fAra" type="search" placeholder="Ürün ya da mağaza ara" aria-label="Ara" autocomplete="off">
+        <label class="sirala"><span>Sırala</span><select id="fSirala"></select></label>
+      </div>
+      <div class="aktifler" id="aktifler"></div>
+      <p class="sonuc" id="sonucSayi" aria-live="polite"></p>
+      <div id="gorunum"></div>
+    </main>
+  </div>
 </div>
 
 <dialog id="detay" aria-labelledby="detayBaslik"><div id="detayIc"></div></dialog>
 <div class="perde" id="perde" hidden></div>
+<div class="bildirim" id="bildirim" role="status" aria-live="polite" hidden></div>
 
-<script src="demo.js"></script>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
