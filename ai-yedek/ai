@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# ai — Tek komutla soru sor; kredisi/kotası biten araç atlanır, sıradakine geçilir.
+# Kullanım:  ai "soru"     |   cat dosya.txt | ai "bunu özetle"
+# Sıra:      AI_SIRA="gemini claude" ai "soru"   (varsayılan: claude gemini codex qwen)
+
+SIRA="${AI_SIRA:-claude gemini codex qwen}"
+LIMIT_KALIBI='usage limit|rate limit|limit reached|quota|credit balance|RESOURCE_EXHAUSTED|429|too many requests|insufficient|exceeded'
+
+PROMPT="$*"
+GIRDI=""
+if [ ! -t 0 ]; then GIRDI="$(cat)"; fi
+if [ -z "$PROMPT" ] && [ -z "$GIRDI" ]; then
+  echo 'Kullanım: ai "sorun"   veya   cat dosya | ai "ne yapılacak"' >&2
+  exit 2
+fi
+
+calistir() {
+  case "$1" in
+    claude) printf '%s' "$GIRDI" | claude -p "$PROMPT" ;;
+    gemini) printf '%s' "$GIRDI" | gemini -p "$PROMPT" ;;
+    codex)  printf '%s' "$GIRDI" | codex exec --skip-git-repo-check "$PROMPT" ;;
+    qwen)   printf '%s' "$GIRDI" | qwen "$PROMPT" ;;
+    *) echo "Bilinmeyen araç: $1" >&2; return 127 ;;
+  esac
+}
+
+GECICI="$(mktemp)"
+trap 'rm -f "$GECICI"' EXIT
+
+for arac in $SIRA; do
+  if ! command -v "$arac" >/dev/null 2>&1; then
+    echo "· $arac kurulu değil, atlanıyor." >&2
+    continue
+  fi
+  echo "· $arac deneniyor..." >&2
+  calistir "$arac" >"$GECICI" 2>&1
+  kod=$?
+  boyut=$(wc -c <"$GECICI")
+  # Kısa çıktı + limit mesajı = kota bitti say. Uzun cevaplardaki "quota" kelimesi yanıltmasın diye boyut sınırı var.
+  if [ "$kod" -eq 0 ] && ! { [ "$boyut" -lt 600 ] && grep -qiE "$LIMIT_KALIBI" "$GECICI"; }; then
+    cat "$GECICI"
+    exit 0
+  fi
+  echo "· $arac başarısız (çıkış kodu $kod): $(head -c 200 "$GECICI" | tr '\n' ' ')" >&2
+done
+
+echo "Hiçbir araç cevap veremedi. Kurulumları ve girişleri kontrol et: ai-kontrol" >&2
+exit 1

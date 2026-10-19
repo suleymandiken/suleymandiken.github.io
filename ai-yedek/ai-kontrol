@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Hangi araçlar kurulu ve giriş yapılmış, tek bakışta gösterir.
+for arac in claude gemini codex qwen; do
+  if command -v "$arac" >/dev/null 2>&1; then
+    printf '✓ %-7s kurulu  (%s)\n' "$arac" "$("$arac" --version 2>/dev/null | head -1)"
+  else
+    printf '✗ %-7s kurulu değil\n' "$arac"
+  fi
+done
+echo
+echo 'Girişleri test etmek için:  AI_SIRA=gemini ai "merhaba"  (her araç için ayrı dene)'
