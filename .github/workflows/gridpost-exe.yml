@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "gridpost/**"
+      - ".github/workflows/gridpost-exe.yml"
   workflow_dispatch:
 
 permissions:
@@ -21,14 +22,14 @@ jobs:
         run: pip install pillow pyinstaller
       - name: Tek dosya .exe derle
         working-directory: gridpost
-        run: pyinstaller --onefile --windowed --name GridPostMini gridpost.py
+        run: pyinstaller --onefile --windowed --name Izgara gridpost.py
       - name: Zip'le
         working-directory: gridpost
-        run: Compress-Archive -Path dist/GridPostMini.exe, README.md -DestinationPath GridPostMini-windows.zip
+        run: Compress-Archive -Path dist/Izgara.exe, README.md -DestinationPath Izgara-windows.zip
       - uses: actions/upload-artifact@v4
         with:
-          name: GridPostMini-windows
-          path: gridpost/GridPostMini-windows.zip
+          name: Izgara-windows
+          path: gridpost/Izgara-windows.zip
       - name: Release'e yükle (sabit indirme linki)
         env:
           GH_TOKEN: ${{ github.token }}
@@ -36,6 +37,6 @@ jobs:
         run: |
           gh release view gridpost --repo "${{ github.repository }}" 2>$null
           if ($LASTEXITCODE -ne 0) {
-            gh release create gridpost --repo "${{ github.repository }}" --target "${{ github.sha }}" --title "GridPost Mini (Windows)" --notes "GridPostMini-windows.zip dosyasını indir, aç, GridPostMini.exe'yi çalıştır."
+            gh release create gridpost --repo "${{ github.repository }}" --target "${{ github.sha }}" --title "Izgara (Windows)" --notes "Izgara-windows.zip dosyasını indir, aç, Izgara.exe'yi çalıştır."
           }
-          gh release upload gridpost GridPostMini-windows.zip --clobber --repo "${{ github.repository }}"
+          gh release upload gridpost Izgara-windows.zip --clobber --repo "${{ github.repository }}"

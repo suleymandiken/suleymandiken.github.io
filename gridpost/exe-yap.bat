@@ -1,8 +1,8 @@
 @echo off
 chcp 65001 >nul
-echo GridPostMini.exe derleniyor...
+echo Izgara.exe derleniyor...
 py -m pip install --quiet --upgrade pillow pyinstaller
-py -m PyInstaller --onefile --windowed --name GridPostMini gridpost.py
+py -m PyInstaller --onefile --windowed --name Izgara gridpost.py
 echo.
-echo Hazir: dist\GridPostMini.exe
+echo Hazir: dist\Izgara.exe
 pause

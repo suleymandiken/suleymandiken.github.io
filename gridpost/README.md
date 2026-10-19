@@ -1,4 +1,4 @@
-# GridPost Mini (Windows)
+# Izgara (Windows)
 
 AppX Studio'nun **Grid Post** uygulamasının mantığıyla çalışan masaüstü sürüm:
 bir fotoğrafı Instagram profilinde tek büyük görsel gibi görünecek parçalara böler.
@@ -12,11 +12,20 @@ bir fotoğrafı Instagram profilinde tek büyük görsel gibi görünecek parça
 
 Parçalar 1080 px genişlikte, %95 JPEG kalitesinde kaydedilir.
 
-## Çalıştırma
-- **En kolayı:** GitHub → Actions → "GridPost Mini .exe" → son çalışmanın
-  `GridPostMini-windows` dosyasını indir, içindeki `GridPostMini.exe`'yi çalıştır.
+## Kurulum (tek satır)
+Başlat → "PowerShell" yaz → aç → şunu yapıştır → Enter:
+
+```powershell
+irm https://raw.githubusercontent.com/suleymandiken/suleymandiken.github.io/claude/amazing-dirac-h329sc/gridpost/kur.ps1 | iex
+```
+
+`%LOCALAPPDATA%\Izgara\ızgara.exe` olarak kurulur, masaüstüne ve Başlat menüsüne kısayol eklenir.
+
+## Diğer yollar
+- **Manuel:** GitHub → Actions → "GridPost Mini .exe" → son çalışmanın
+  `Izgara-windows.zip` dosyasını indir, içindeki `Izgara.exe`'yi çalıştır.
 - **Python varsa:** `calistir.bat`'a çift tıkla.
-- **Kendin .exe yapmak için:** `exe-yap.bat` → `dist\GridPostMini.exe`
+- **Kendin .exe yapmak için:** `exe-yap.bat` → `dist\Izgara.exe`
 
 > Not: İmzasız .exe olduğu için Windows SmartScreen uyarı verebilir →
 > "Ek bilgi" → "Yine de çalıştır".

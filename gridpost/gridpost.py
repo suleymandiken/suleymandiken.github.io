@@ -1,4 +1,4 @@
-"""GridPost Mini — fotoğrafı Instagram profil ızgarası için parçalara böler.
+"""Izgara (GridPost Mini) — fotoğrafı Instagram profil ızgarası için parçalara böler.
 
 Mantık (AppX Studio'nun Grid Post uygulamasındaki gibi):
   1. Fotoğrafı aç.
@@ -45,7 +45,7 @@ MUTED = "#8a8a99"
 class GridPostApp:
     def __init__(self, root):
         self.root = root
-        root.title("GridPost Mini")
+        root.title("Izgara")
         root.geometry("1000x700")
         root.minsize(760, 520)
         root.configure(bg=BG)
@@ -77,7 +77,7 @@ class GridPostApp:
         side.pack(side="left", fill="y")
         side.pack_propagate(False)
 
-        tk.Label(side, text="GridPost Mini", bg=PANEL, fg=TEXT,
+        tk.Label(side, text="Izgara", bg=PANEL, fg=TEXT,
                  font=("Segoe UI", 16, "bold")).pack(anchor="w", padx=18, pady=(18, 2))
         tk.Label(side, text="Instagram ızgara bölücü", bg=PANEL, fg=MUTED,
                  font=("Segoe UI", 9)).pack(anchor="w", padx=18, pady=(0, 16))
@@ -251,7 +251,7 @@ class GridPostApp:
     # ---------- dışa aktarma ----------
     def export(self):
         if not self.image:
-            messagebox.showinfo("GridPost Mini", "Önce bir fotoğraf aç.")
+            messagebox.showinfo("Izgara", "Önce bir fotoğraf aç.")
             return
         folder = filedialog.askdirectory(title="Parçaların kaydedileceği klasör")
         if not folder:
