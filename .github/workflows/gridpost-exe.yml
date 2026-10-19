@@ -1,0 +1,28 @@
+name: GridPost Mini .exe
+
+on:
+  push:
+    paths:
+      - "gridpost/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  derle:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Bağımlılıkları kur
+        run: pip install pillow pyinstaller
+      - name: Tek dosya .exe derle
+        working-directory: gridpost
+        run: pyinstaller --onefile --windowed --name GridPostMini gridpost.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GridPostMini-windows
+          path: gridpost/dist/GridPostMini.exe
