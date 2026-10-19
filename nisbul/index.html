@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nişbul · Shopify ürün araştırma</title>
+<meta name="description" content="Yeni açılan Shopify mağazalarını ve ürünlerini nişe, fiyata, ülkeye ve dile göre tara.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23e8542f'/%3E%3Ccircle cx='44' cy='44' r='20' fill='none' stroke='white' stroke-width='9'/%3E%3Cpath d='M58 58l18 18' stroke='white' stroke-width='10' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#ana">İçeriğe geç</a>
+<header class="ust">
+  <a class="logo" href="#urunler"><span class="logo-ic" aria-hidden="true"></span>Nişbul</a>
+  <nav class="sekmeler" aria-label="Bölümler">
+    <a href="#urunler" data-sekme="urunler">Ürünler</a>
+    <a href="#magazalar" data-sekme="magazalar">Mağazalar</a>
+    <a href="#bulucu" data-sekme="bulucu">Bulucu</a>
+    <a href="#kaydedilenler" data-sekme="kaydedilenler">Kaydedilenler <i id="kayitSayi">0</i></a>
+  </nav>
+</header>
+
+<div class="uyari" id="demoUyari" hidden>
+  <b>Örnek veri.</b> Mağaza ve ürünler kurgusaldır, arayüzü denemen için üretildi. Gerçek mağazaları taramak için <code>nisbul/araclar/tara.py</code> betiğini çalıştırıp çıkan <code>data.json</code> dosyasını bu klasöre koy.
+</div>
+
+<section class="ozet" aria-label="Özet">
+  <h1>Yeni Shopify mağazalarında<br>ne satıldığını gör.</h1>
+  <div class="istatistik" id="istatistik"></div>
+</section>
+
+<div class="hizli" id="hizli" role="list" aria-label="Kategoriler"></div>
+
+<div class="duzen">
+  <aside class="filtre" id="filtre" aria-label="Filtreler">
+    <div class="filtre-bas"><b>Filtreler</b><button class="metin-btn" id="sifirla" type="button">Sıfırla</button><button class="kapat" id="filtreKapat" type="button" aria-label="Filtreleri kapat">✕</button></div>
+    <label>Ara<input id="fAra" type="search" placeholder="ör. claw clip, yoga" autocomplete="off"></label>
+    <label>Kategori<select id="fKategori"></select></label>
+    <label>Niş<select id="fNis"></select></label>
+    <fieldset class="cift" data-sadece="urun bulucu"><legend>Fiyat (mağaza para biriminde)</legend><input id="fFiyatMin" type="number" min="0" inputmode="decimal" placeholder="En az" aria-label="En az fiyat"><input id="fFiyatMax" type="number" min="0" inputmode="decimal" placeholder="En çok" aria-label="En çok fiyat"></fieldset>
+    <fieldset class="cift" data-sadece="magaza"><legend>Ürün sayısı</legend><input id="fAdetMin" type="number" min="0" inputmode="numeric" placeholder="En az" aria-label="En az ürün sayısı"><input id="fAdetMax" type="number" min="0" inputmode="numeric" placeholder="En çok" aria-label="En çok ürün sayısı"></fieldset>
+    <label>Eklenme<select id="fZaman"><option value="">Tümü</option><option value="1">Son 24 saat</option><option value="7">Son 7 gün</option><option value="30">Son 30 gün</option><option value="90">Son 90 gün</option></select></label>
+    <label>Ülke<select id="fUlke"></select></label>
+    <label>Para birimi<select id="fPara"></select></label>
+    <label>Dil<select id="fDil"></select></label>
+    <label>Alan adı uzantısı<select id="fTld"></select></label>
+    <label class="kutu" data-sadece="urun bulucu"><input id="fIndirim" type="checkbox"> Sadece indirimdekiler</label>
+  </aside>
+
+  <main id="ana" tabindex="-1">
+    <div class="arac-cubugu" id="aracCubugu">
+      <button class="filtre-ac" id="filtreAc" type="button">Filtreler <i id="filtreSayi" hidden></i></button>
+      <p class="sonuc" id="sonucSayi" aria-live="polite"></p>
+      <label class="sirala">Sırala<select id="fSirala"></select></label>
+    </div>
+    <div id="gorunum"></div>
+  </main>
+</div>
+
+<dialog id="detay" aria-labelledby="detayBaslik"><div id="detayIc"></div></dialog>
+<div class="perde" id="perde" hidden></div>
+
+<script src="demo.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

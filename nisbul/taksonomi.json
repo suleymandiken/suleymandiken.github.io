@@ -1,0 +1,85 @@
+{
+  "kategoriler": [
+    {"id": "ev", "ad": "Ev & Yaşam", "nisler": [
+      {"id": "ev-dekor", "ad": "Ev dekoru", "emoji": "🪴", "anahtar": ["vase", "wall art", "candle", "decor", "mirror", "cushion"]},
+      {"id": "mutfak", "ad": "Mutfak gereçleri", "emoji": "🍳", "anahtar": ["kitchen", "knife", "pan", "cutting board", "spatula", "blender"]},
+      {"id": "aydinlatma", "ad": "Aydınlatma", "emoji": "💡", "anahtar": ["lamp", "led strip", "night light", "pendant light", "sunset lamp"]},
+      {"id": "duzen", "ad": "Düzenleme & saklama", "emoji": "🗂️", "anahtar": ["organizer", "storage box", "drawer", "shelf", "hanger"]},
+      {"id": "temizlik", "ad": "Temizlik", "emoji": "🧽", "anahtar": ["cleaning", "mop", "brush", "lint remover", "vacuum"]},
+      {"id": "uyku", "ad": "Uyku & yatak", "emoji": "🛏️", "anahtar": ["pillow", "blanket", "sheet", "sleep mask", "duvet"]}
+    ]},
+    {"id": "moda", "ad": "Giyim & Moda", "nisler": [
+      {"id": "kadin-giyim", "ad": "Kadın giyim", "emoji": "👗", "anahtar": ["dress", "blouse", "skirt", "cardigan", "bodysuit"]},
+      {"id": "erkek-giyim", "ad": "Erkek giyim", "emoji": "👔", "anahtar": ["shirt", "hoodie", "cargo pants", "polo", "jacket"]},
+      {"id": "sokak", "ad": "Sokak giyim", "emoji": "🧢", "anahtar": ["oversized tee", "streetwear", "graphic tee", "beanie", "tracksuit"]},
+      {"id": "ayakkabi", "ad": "Ayakkabı", "emoji": "👟", "anahtar": ["sneakers", "boots", "sandals", "loafers", "slippers"]},
+      {"id": "canta", "ad": "Çanta", "emoji": "👜", "anahtar": ["bag", "tote", "backpack", "crossbody", "wallet"]},
+      {"id": "takim", "ad": "İç giyim & şekillendirici", "emoji": "🩱", "anahtar": ["shapewear", "lingerie", "bra", "leggings", "socks"]}
+    ]},
+    {"id": "taki", "ad": "Takı & Aksesuar", "nisler": [
+      {"id": "kolye", "ad": "Kolye & küpe", "emoji": "📿", "anahtar": ["necklace", "earrings", "pendant", "choker", "hoops"]},
+      {"id": "yuzuk", "ad": "Yüzük & bileklik", "emoji": "💍", "anahtar": ["ring", "bracelet", "bangle", "anklet"]},
+      {"id": "saat", "ad": "Saat", "emoji": "⌚", "anahtar": ["watch", "smartwatch band", "chronograph"]},
+      {"id": "gozluk", "ad": "Gözlük", "emoji": "🕶️", "anahtar": ["sunglasses", "blue light glasses", "eyewear"]},
+      {"id": "sac-aks", "ad": "Saç aksesuarı", "emoji": "🎀", "anahtar": ["claw clip", "scrunchie", "headband", "hair clip"]}
+    ]},
+    {"id": "guzellik", "ad": "Güzellik & Bakım", "nisler": [
+      {"id": "cilt", "ad": "Cilt bakımı", "emoji": "🧴", "anahtar": ["serum", "moisturizer", "cleanser", "face mask", "sunscreen"]},
+      {"id": "makyaj", "ad": "Makyaj", "emoji": "💄", "anahtar": ["lipstick", "mascara", "foundation", "lip gloss", "blush"]},
+      {"id": "sac", "ad": "Saç bakımı", "emoji": "💇", "anahtar": ["hair oil", "shampoo", "hair dryer", "curler", "straightener"]},
+      {"id": "tirnak", "ad": "Tırnak", "emoji": "💅", "anahtar": ["press on nails", "nail polish", "gel nail", "nail kit"]},
+      {"id": "guzellik-cihaz", "ad": "Güzellik cihazları", "emoji": "✨", "anahtar": ["gua sha", "face roller", "led mask", "ipl", "microcurrent"]},
+      {"id": "parfum", "ad": "Parfüm", "emoji": "🌸", "anahtar": ["perfume", "fragrance", "body mist", "cologne"]}
+    ]},
+    {"id": "saglik", "ad": "Sağlık & Spor", "nisler": [
+      {"id": "fitness", "ad": "Fitness ekipmanı", "emoji": "🏋️", "anahtar": ["resistance band", "dumbbell", "kettlebell", "yoga mat", "jump rope"]},
+      {"id": "takviye", "ad": "Takviye", "emoji": "💊", "anahtar": ["supplement", "protein", "collagen", "gummies", "vitamin"]},
+      {"id": "agri", "ad": "Ağrı & duruş", "emoji": "🩹", "anahtar": ["posture corrector", "massage gun", "neck massager", "knee brace", "heating pad"]},
+      {"id": "uyku-saglik", "ad": "Uyku sağlığı", "emoji": "😴", "anahtar": ["mouth tape", "white noise", "anti snoring", "sleep aid"]},
+      {"id": "dis", "ad": "Ağız & diş", "emoji": "🦷", "anahtar": ["teeth whitening", "water flosser", "toothbrush", "tongue scraper"]}
+    ]},
+    {"id": "evcil", "ad": "Evcil Hayvan", "nisler": [
+      {"id": "kopek", "ad": "Köpek", "emoji": "🐕", "anahtar": ["dog", "leash", "harness", "chew toy", "dog bed"]},
+      {"id": "kedi", "ad": "Kedi", "emoji": "🐈", "anahtar": ["cat", "scratcher", "litter", "cat tree", "cat toy"]},
+      {"id": "evcil-bakim", "ad": "Bakım & tımar", "emoji": "🛁", "anahtar": ["grooming", "pet brush", "pet shampoo", "deshedding", "nail grinder"]},
+      {"id": "akvaryum", "ad": "Akvaryum", "emoji": "🐠", "anahtar": ["aquarium", "fish tank", "filter", "aquascape"]}
+    ]},
+    {"id": "bebek", "ad": "Bebek & Çocuk", "nisler": [
+      {"id": "bebek-bakim", "ad": "Bebek bakımı", "emoji": "🍼", "anahtar": ["baby", "bottle", "pacifier", "swaddle", "teether"]},
+      {"id": "oyuncak", "ad": "Oyuncak", "emoji": "🧸", "anahtar": ["toy", "plush", "building blocks", "puzzle", "montessori"]},
+      {"id": "cocuk-giyim", "ad": "Çocuk giyim", "emoji": "👶", "anahtar": ["kids", "toddler", "onesie", "romper"]},
+      {"id": "egitici", "ad": "Eğitici", "emoji": "🔤", "anahtar": ["educational", "flash cards", "busy board", "learning"]}
+    ]},
+    {"id": "elektronik", "ad": "Elektronik", "nisler": [
+      {"id": "telefon-aks", "ad": "Telefon aksesuarı", "emoji": "📱", "anahtar": ["phone case", "charger", "magsafe", "screen protector", "power bank"]},
+      {"id": "ses", "ad": "Ses", "emoji": "🎧", "anahtar": ["earbuds", "headphones", "speaker", "soundbar"]},
+      {"id": "akilli-ev", "ad": "Akıllı ev", "emoji": "🏠", "anahtar": ["smart plug", "security camera", "smart bulb", "doorbell"]},
+      {"id": "oyun", "ad": "Oyun", "emoji": "🎮", "anahtar": ["gaming", "controller", "mouse pad", "keyboard", "headset"]},
+      {"id": "kamera", "ad": "Kamera & çekim", "emoji": "📷", "anahtar": ["ring light", "tripod", "gimbal", "lens", "microphone"]}
+    ]},
+    {"id": "hobi", "ad": "Hobi & Sanat", "nisler": [
+      {"id": "sanat", "ad": "Resim & sanat", "emoji": "🎨", "anahtar": ["paint", "canvas", "brush set", "sketchbook", "diamond painting"]},
+      {"id": "el-isi", "ad": "El işi", "emoji": "🧶", "anahtar": ["crochet", "knitting", "embroidery", "sewing", "yarn"]},
+      {"id": "kirtasiye", "ad": "Kırtasiye", "emoji": "✏️", "anahtar": ["notebook", "planner", "pen", "sticker", "journal"]},
+      {"id": "muzik", "ad": "Müzik", "emoji": "🎸", "anahtar": ["guitar", "ukulele", "kalimba", "piano", "drum"]},
+      {"id": "kitap", "ad": "Kitap & e-kitap", "emoji": "📚", "anahtar": ["book", "ebook", "audiobook", "bookmark"]}
+    ]},
+    {"id": "dis-mekan", "ad": "Outdoor & Seyahat", "nisler": [
+      {"id": "kamp", "ad": "Kamp", "emoji": "⛺", "anahtar": ["camping", "tent", "sleeping bag", "lantern", "hiking"]},
+      {"id": "seyahat", "ad": "Seyahat", "emoji": "🧳", "anahtar": ["travel", "luggage", "packing cubes", "neck pillow"]},
+      {"id": "bahce", "ad": "Bahçe", "emoji": "🌱", "anahtar": ["garden", "planter", "seeds", "watering", "solar light"]},
+      {"id": "balik", "ad": "Balıkçılık", "emoji": "🎣", "anahtar": ["fishing", "lure", "rod", "reel", "tackle"]},
+      {"id": "bisiklet", "ad": "Bisiklet & scooter", "emoji": "🚲", "anahtar": ["bike", "cycling", "scooter", "helmet"]}
+    ]},
+    {"id": "arac", "ad": "Otomotiv", "nisler": [
+      {"id": "arac-ic", "ad": "Araç içi aksesuar", "emoji": "🚗", "anahtar": ["car", "car organizer", "seat cover", "car freshener", "phone mount"]},
+      {"id": "arac-bakim", "ad": "Araç bakımı", "emoji": "🧰", "anahtar": ["car wash", "detailing", "tire", "jump starter"]},
+      {"id": "motosiklet", "ad": "Motosiklet", "emoji": "🏍️", "anahtar": ["motorcycle", "moto", "riding gloves"]}
+    ]},
+    {"id": "gida", "ad": "Gıda & İçecek", "nisler": [
+      {"id": "kahve", "ad": "Kahve & çay", "emoji": "☕", "anahtar": ["coffee", "tea", "matcha", "espresso", "french press"]},
+      {"id": "atistirmalik", "ad": "Atıştırmalık", "emoji": "🍫", "anahtar": ["snack", "chocolate", "candy", "jerky", "cookies"]},
+      {"id": "sise", "ad": "Matara & termos", "emoji": "🥤", "anahtar": ["water bottle", "tumbler", "thermos", "shaker"]}
+    ]}
+  ]
+}
