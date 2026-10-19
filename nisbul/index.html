@@ -35,26 +35,19 @@
 
 <div class="duzen">
   <aside class="filtre" id="filtre" aria-label="Filtreler">
-    <div class="filtre-bas"><b>Filtreler</b><button class="metin-btn" id="sifirla" type="button">Sıfırla</button><button class="kapat" id="filtreKapat" type="button" aria-label="Filtreleri kapat">✕</button></div>
-    <label>Ara<input id="fAra" type="search" placeholder="ör. claw clip, yoga" autocomplete="off"></label>
-    <label>Kategori<select id="fKategori"></select></label>
-    <label>Niş<select id="fNis"></select></label>
-    <fieldset class="cift" data-sadece="urun bulucu"><legend>Fiyat (mağaza para biriminde)</legend><input id="fFiyatMin" type="number" min="0" inputmode="decimal" placeholder="En az" aria-label="En az fiyat"><input id="fFiyatMax" type="number" min="0" inputmode="decimal" placeholder="En çok" aria-label="En çok fiyat"></fieldset>
-    <fieldset class="cift" data-sadece="magaza"><legend>Ürün sayısı</legend><input id="fAdetMin" type="number" min="0" inputmode="numeric" placeholder="En az" aria-label="En az ürün sayısı"><input id="fAdetMax" type="number" min="0" inputmode="numeric" placeholder="En çok" aria-label="En çok ürün sayısı"></fieldset>
-    <label>Eklenme<select id="fZaman"><option value="">Tümü</option><option value="1">Son 24 saat</option><option value="7">Son 7 gün</option><option value="30">Son 30 gün</option><option value="90">Son 90 gün</option></select></label>
-    <label>Ülke<select id="fUlke"></select></label>
-    <label>Para birimi<select id="fPara"></select></label>
-    <label>Dil<select id="fDil"></select></label>
-    <label>Alan adı uzantısı<select id="fTld"></select></label>
-    <label class="kutu" data-sadece="urun bulucu"><input id="fIndirim" type="checkbox"> Sadece indirimdekiler</label>
+    <div class="filtre-bas"><b>Filtreler</b><button class="metin-btn" id="sifirla" type="button">Tümünü Sıfırla</button><button class="kapat" id="filtreKapat" type="button" aria-label="Filtreleri kapat">✕</button></div>
+    <div class="filtre-govde" id="filtreGovde"></div>
+    <div class="filtre-alt"><button class="birincil" id="uygula" type="button">Filtreleri Uygula</button><button class="ikincil" id="temizle" type="button">Tümünü Temizle</button></div>
   </aside>
 
   <main id="ana" tabindex="-1">
     <div class="arac-cubugu" id="aracCubugu">
       <button class="filtre-ac" id="filtreAc" type="button">Filtreler <i id="filtreSayi" hidden></i></button>
-      <p class="sonuc" id="sonucSayi" aria-live="polite"></p>
-      <label class="sirala">Sırala<select id="fSirala"></select></label>
+      <input class="ara" id="fAra" type="search" placeholder="Ürün ya da mağaza ara" aria-label="Ara" autocomplete="off">
+      <label class="sirala"><span>Sırala</span><select id="fSirala"></select></label>
     </div>
+    <div class="aktifler" id="aktifler"></div>
+    <p class="sonuc" id="sonucSayi" aria-live="polite"></p>
     <div id="gorunum"></div>
   </main>
 </div>

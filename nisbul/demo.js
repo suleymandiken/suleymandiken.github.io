@@ -21,7 +21,7 @@ function demoVeriUret(taksonomi, tohum = 20261019) {
   const SON = ["co", "shop", "studio", "supply", "lab", "house", "goods", "store", "market", "club", "life", "hq"];
   const SIFAT = ["Premium", "Mini", "Portable", "Classic", "Minimalist", "Luxe", "Everyday", "Signature", "Soft", "Ultra", "Pro", "Essential", "Deluxe", "Compact"];
   const EK = ["", "", "", " Set", " Kit", " 2.0", " Bundle", " Duo", " Max"];
-  const FIYAT = { ev: [12, 70], moda: [15, 90], taki: [9, 60], guzellik: [10, 55], saglik: [15, 120], evcil: [8, 60], bebek: [9, 50], elektronik: [15, 140], hobi: [8, 60], "dis-mekan": [12, 110], arac: [10, 80], gida: [8, 40] };
+  const FIYAT = { giyim: [15, 90], ayakkabi: [25, 140], taki: [9, 60], guzellik: [10, 55], saglik: [15, 120], ev: [12, 70], mobilya: [60, 600], bahce: [12, 150], elektronik: [15, 140], spor: [12, 110], oyuncak: [8, 60], bebek: [9, 50], evcil: [8, 60], canta: [15, 160], gida: [8, 40], arac: [10, 80], sanat: [8, 60], ofis: [6, 45], alet: [12, 120], kitap: [8, 35], muzik: [20, 300], hediye: [15, 80], "yas-sinirli": [10, 60], endustri: [20, 400], "el-yapimi": [15, 90], dijital: [5, 49] };
 
   const nisler = taksonomi.kategoriler.flatMap(k => k.nisler.map(n => ({ ...n, kategori: k.id })));
   const simdi = Date.now(), GUN = 864e5;

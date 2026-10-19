@@ -3,7 +3,8 @@
 storelister.com'un tersine mühendislikle çıkarılmış işlevsel karşılığı: yeni Shopify mağazalarını ve ürünlerini nişe göre listeleyen bir ürün araştırma aracı.
 
 ## Neler var
-- **Ürünler:** ızgara görünüm. Kategori, niş, fiyat, ülke, para birimi, dil, alan adı uzantısı, eklenme tarihi ve indirim filtreleri, 4 sıralama.
+- **Filtre paneli** (orijinaldeki yapı): takvimden eklenme günü, 26 kategoride aranabilir çoklu seçim, ₺ cinsinden fiyat aralığı (farklı para birimleri yaklaşık kurla çevrilir), mağaza başına maks ürün (1–10), tüm ülkeler, para birimi, dil ve domain uzantısı listeleri. Her bölümde "?" açıklaması var. Seçimler "Filtreleri Uygula"ya basınca devreye girer; uygulananlar sonuçların üstünde kaldırılabilir çipler olarak görünür.
+- **Ürünler:** ızgara görünüm, anlık arama, 4 sıralama.
 - **Mağazalar:** ürün sayısı filtresiyle mağaza dizini. Mağazaya tıklayınca ortanca fiyat ve tüm ürünleri açılır.
 - **Bulucu:** filtrelenmiş ürünleri tek tek gösteren kaydırmalı deste (sağa kaydır = kaydet, sola = geç, klavyede ← →).
 - **Kaydedilenler:** ürün ve mağaza listeleri, Excel'e uygun CSV dışa aktarma. Kayıtlar tarayıcıda kalır.
