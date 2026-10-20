@@ -33,6 +33,7 @@ SHOPIFY_AG = "23.227.38."
 def nrd_indir(gun):
     """Belirtilen günün yeni kayıtlı alan adı listesini indirir. Bulamazsa boş liste döner."""
     ad = f"{gun.isoformat()}.zip"
+    print(f"{gun}: liste indiriliyor...")
     for parca in (base64.b64encode(ad.encode()).decode(), ad):
         try:
             y = getir(f"https://www.whoisds.com/whois-database/newly-registered-domains/{parca}/nrd", zaman_asimi=120)
