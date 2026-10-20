@@ -44,7 +44,11 @@ class Supabase:
             raise SystemExit("SUPABASE_URL ve SUPABASE_SERVICE_KEY ortam değişkenleri gerekli.")
 
     def istek(self, yontem, yol, veri=None, tercih=None, deneme=3):
-        basliklar = {"apikey": self.anahtar, "Authorization": "Bearer " + self.anahtar, "Content-Type": "application/json"}
+        basliklar = {"apikey": self.anahtar, "Content-Type": "application/json"}
+        # Eski (JWT) service_role anahtarı Authorization başlığında da gider; yeni sb_secret_ anahtarları JWT değildir,
+        # Supabase onları sadece apikey başlığından tanır.
+        if not self.anahtar.startswith("sb_"):
+            basliklar["Authorization"] = "Bearer " + self.anahtar
         if tercih:
             basliklar["Prefer"] = tercih
         govde = json.dumps(veri, ensure_ascii=False, default=str).encode() if veri is not None else None
