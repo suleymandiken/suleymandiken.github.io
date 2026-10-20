@@ -132,7 +132,8 @@ create or replace function public.trend_guncelle() returns int
 language plpgsql security definer set search_path = public as $$
 declare n int;
 begin
-  delete from trendler;
+  -- Supabase'in safeupdate eklentisi koşulsuz DELETE'i reddeder.
+  delete from trendler where true;
   insert into trendler
   select u.anahtar,
          (array_agg(u.ad order by u.eklenme desc))[1],
