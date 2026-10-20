@@ -249,23 +249,26 @@ end $$;
 revoke all on function public.trend_guncelle() from public, anon, authenticated;
 
 -- ============ Veri penceresi ============
--- Son "gun" günde keşfedilen mağazalar (ve ürünleri, satış geçmişleri) tutulur, daha eskiler silinir.
--- Toplam ürün "en_cok_urun"u aşarsa en eski mağazalar daha erken silinir; böylece ücretsiz katman dolmaz.
+-- Toplam ürün "en_cok_urun"u aşarsa en eski mağazalar (ürünleri ve satış geçmişleriyle) silinir; ücretsiz katman dolmaz.
+-- İsteğe bağlı "gun" > 0 ise o günden eski mağazalar da silinir.
 -- Bir üyenin kaydettiği ürünün ya da mağazanın mağazası silinmez.
 -- Ürün bazında değil mağaza bazında silinir: aksi halde her gün yeniden taranan mağazanın ürünleri "yeni" diye geri gelirdi.
-create or replace function public.eski_verileri_sil(gun int default 30, en_cok_urun bigint default 500000) returns jsonb
+create or replace function public.eski_verileri_sil(gun int default 0, en_cok_urun bigint default 500000) returns jsonb
 language plpgsql security definer set search_path = public as $$
 declare n_gun int := 0; n_tavan int := 0;
 begin
-  with korunan as (
-    select k.ref as magaza_id from kayitlar k where k.tur = 'm'
-    union select u.magaza_id from kayitlar k join urunler u on u.id = k.ref where k.tur = 'u'
-  ), sil as (
-    delete from magazalar m where m.ilk_gorulme < now() - make_interval(days => gun)
-      and m.id not in (select magaza_id from korunan)
-    returning 1
-  )
-  select count(*) into n_gun from sil;
+  -- gun = 0: gün sınırı yok, sadece ürün tavanı uygulanır.
+  if gun > 0 then
+    with korunan as (
+      select k.ref as magaza_id from kayitlar k where k.tur = 'm'
+      union select u.magaza_id from kayitlar k join urunler u on u.id = k.ref where k.tur = 'u'
+    ), sil as (
+      delete from magazalar m where m.ilk_gorulme < now() - make_interval(days => gun)
+        and m.id not in (select magaza_id from korunan)
+      returning 1
+    )
+    select count(*) into n_gun from sil;
+  end if;
 
   if (select count(*) from urunler) > en_cok_urun then
     with korunan as (
@@ -285,6 +288,18 @@ begin
     select count(*) into n_tavan from sil;
   end if;
   return jsonb_build_object('gun_doldugu_icin', n_gun, 'tavan_icin', n_tavan, 'kalan_urun', (select count(*) from urunler));
+end $$;
+
+-- Mağazanın sadece en çok satan ürünleri saklanır; listeden düşenler silinir (kaydedilenler hariç).
+create or replace function public.magaza_urunlerini_kirp(magaza bigint, tut bigint[]) returns int
+language plpgsql security definer set search_path = public as $$
+declare n int;
+begin
+  if coalesce(cardinality(tut), 0) = 0 then return 0; end if;  -- boş liste her şeyi silmesin
+  delete from urunler u where u.magaza_id = magaza and not (u.shopify_id = any(tut))
+    and not exists (select 1 from kayitlar k where k.tur = 'u' and k.ref = u.id);
+  get diagnostics n = row_count;
+  return n;
 end $$;
 
 -- ============ Kaydedilenler ============
@@ -595,6 +610,8 @@ grant execute on function public.urun_ara(jsonb), public.magaza_ara(jsonb), publ
 grant execute on function public.trend_guncelle() to service_role;
 revoke all on function public.eski_verileri_sil(int, bigint) from public, anon, authenticated;
 grant execute on function public.eski_verileri_sil(int, bigint) to service_role;
+revoke all on function public.magaza_urunlerini_kirp(bigint, bigint[]) from public, anon, authenticated;
+grant execute on function public.magaza_urunlerini_kirp(bigint, bigint[]) to service_role;
 grant select on public.satis_olaylari to authenticated;
 revoke insert, update, delete on public.satis_olaylari from authenticated;
 revoke all on public.satis_olaylari from anon;
@@ -602,3 +619,6 @@ revoke all on function public.satis_sira_yaz(jsonb), public.gorsel_hash_yaz(json
 grant execute on function public.satis_sira_yaz(jsonb), public.gorsel_hash_yaz(jsonb) to service_role;
 revoke all on function public.satis_takip(bigint, timestamptz) from public, anon;
 grant execute on function public.satis_takip(bigint, timestamptz) to authenticated;
+
+-- PostgREST (Supabase API) yeni fonksiyonları hemen görsün.
+notify pgrst, 'reload schema';
