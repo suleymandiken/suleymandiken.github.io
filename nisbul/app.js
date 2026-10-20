@@ -32,7 +32,7 @@
   const URUN = new Map(), MAGAZA = new Map();
 
   /* S.f uygulanmış filtreler, T paneldeki taslak. "Filtreleri Uygula" T'yi S.f'ye kopyalar. */
-  const F0 = { ara: "", gun: "", kesif: "", kategoriler: [], nis: "", anahtar: "", anahtarAd: "", fmin: 0, fmax: null, magazaBasi: 0, ulkeler: [], paralar: [], diller: [], tldler: [], durumlar: [], amin: "", amax: "", maxMagaza: "", indirim: false };
+  const F0 = { ara: "", gun: "", kesif: "", kategoriler: [], nis: "", anahtar: "", anahtarAd: "", fmin: 0, fmax: null, magazaBasi: 0, ulkeler: [], paralar: [], diller: [], tldler: [], durumlar: [], amin: "", amax: "", maxMagaza: "", indirim: false, satista: false };
   const kopya = f => JSON.parse(JSON.stringify(f));
   const S = {
     sekme: "urunler", f: kopya(F0), sirala: { urunler: "yeni", magazalar: "yeni", trendler: "yukselen" },
@@ -42,6 +42,7 @@
     istek: 0
   };
   let T = kopya(F0), takvimAy = null;
+  S.bulucuTR = depo.al("bulucuTR", true);
   const araMetni = {};
   const kayitSayiYaz = () => { $("#kayitSayi").textContent = S.kayit.u.size + S.kayit.m.size; };
 
@@ -213,16 +214,16 @@
   }
 
   const SIRALA = {
-    urunler: [["yeni", "En yeni"], ["fiyat-a", "Fiyat: düşükten yükseğe"], ["fiyat-z", "Fiyat: yüksekten düşüğe"], ["indirim", "En yüksek indirim"]],
+    urunler: [["yeni", "En yeni"], ["fiyat-a", "Fiyat: düşükten yükseğe"], ["fiyat-z", "Fiyat: yüksekten düşüğe"], ["indirim", "En yüksek indirim"], ["satis", "Satış hareketi (7 gün)"]],
     magazalar: [["yeni", "En yeni keşfedilen"], ["urun-cok", "En çok ürün"], ["urun-az", "En az ürün"], ["ad", "Ada göre"]],
-    trendler: [["yukselen", "Yükselen (son 14 gün)"], ["doymamis", "Henüz doymamış"], ["yaygin", "En yaygın"], ["yeni", "Yeni çıkan"]]
+    trendler: [["yukselen", "Yükselen (son 14 gün)"], ["doymamis", "Henüz doymamış"], ["satan", "En çok satış hareketi"], ["yaygin", "En yaygın"], ["yeni", "Yeni çıkan"]]
   };
   function parametre(tur) {
     const f = S.f, p = { ara: f.ara, kategoriler: f.kategoriler };
     if (tur === "trend") return { ...p, max_magaza: f.maxMagaza || null, sirala: S.sirala.trendler };
     Object.assign(p, { nis: f.nis, gun: f.gun, kesif_gun: f.kesif || null, ulkeler: f.ulkeler, paralar: f.paralar, diller: f.diller, tldler: f.tldler });
     if (tur === "magaza") return { ...p, durumlar: f.durumlar, amin: f.amin, amax: f.amax, sirala: S.sirala.magazalar };
-    return { ...p, fmin: f.fmin || null, fmax: f.fmax, indirim: f.indirim, magaza_basi: f.magazaBasi || null, anahtar: f.anahtar, sirala: S.sirala.urunler };
+    return { ...p, fmin: f.fmin || null, fmax: f.fmax, indirim: f.indirim, satista: f.satista, magaza_basi: f.magazaBasi || null, anahtar: f.anahtar, sirala: S.sirala.urunler };
   }
 
   /* ---------- parçalar ---------- */
@@ -240,8 +241,14 @@
     const ind = indirimOrani(p), yeni = Date.now() - Date.parse(p.eklenme) < 3 * GUN;
     return `<article class="kart">${kalp("u", p.id, p.ad)}<button class="ac" type="button" data-urun="${p.id}">${gorsel(p.gorsel, p.nis)}
       ${p.kaldirildi ? `<span class="rozet kal">Kaldırıldı</span>` : yeni ? `<span class="rozet">Yeni</span>` : ""}${ind >= .2 ? `<span class="rozet ind">-%${Math.round(ind * 100)}</span>` : ""}
-      <div class="kart-ic"><div class="kart-ad">${esc(p.ad)}</div>${fiyatHtml(p)}<div class="alt">${bayrak(p.ulke)} ${esc(p.alan)} · ${once(p.eklenme)}</div></div></button></article>`;
+      <div class="kart-ic"><div class="kart-ad">${esc(p.ad)}</div>${fiyatHtml(p)}${satisCizgi(p)}<div class="alt">${bayrak(p.ulke)} ${esc(p.alan)} · ${once(p.eklenme)}</div></div></button></article>`;
   }
+  // Mağazanın "en çok satanlar" listesindeki yeri ve son 7 gündeki yükselişi.
+  const satisCizgi = p => {
+    const ust = p.satis_sira && p.satis_sira <= 3, hareket = p.satis_hareket_7g > 0;
+    if (!ust && !hareket) return "";
+    return `<div class="satis-cizgi">${ust ? `🔥 Mağazada #${p.satis_sira} satan` : ""}${ust && hareket ? " · " : ""}${hareket ? `↑${p.satis_hareket_7g} (7 gün)` : ""}</div>`;
+  };
   const DURUM = { acik: ["Açık", "acik"], sifreli: ["Açılmak üzere", "sifreli"], kapali: ["Kapalı", "kapali"], yeni: ["Sırada", "kapali"] };
   const durumRozet = d => { const [t, c] = DURUM[d] || DURUM.yeni; return `<span class="durum ${c}">${t}</span>`; };
   function magazaSatir(m) {
@@ -263,7 +270,8 @@
       ${hiz >= 2 ? `<span class="rozet ind">+${hiz} mağaza / 14 gün</span>` : ""}
       <div class="kart-ic"><div class="kart-ad">${esc(t.ornek_ad)}</div>
       <div class="trend-say"><b>${sayi.format(t.magaza_sayisi)}</b> mağazada${t.magaza_sayisi <= 5 ? ` <span class="durum acik">az rekabet</span>` : ""}</div>
-      <div class="alt">${esc(n.ad)} · ortanca ${t.medyan_fiyat_tl ? tl(t.medyan_fiyat_tl) : "–"} · ilk ${once(t.ilk_gorulme)}</div></div></button></article>`;
+      ${t.satis_hareket_7g > 0 ? `<div class="satis-cizgi">↑${t.satis_hareket_7g} satış hareketi (7 gün)</div>` : ""}
+      <div class="alt">${t.gorsel_eslesme ? "📷 görselle eşleşti · " : ""}${esc(n.ad)} · ortanca ${t.medyan_fiyat_tl ? tl(t.medyan_fiyat_tl) : "–"} · ilk ${once(t.ilk_gorulme)}</div></div></button></article>`;
   }
 
   /* ---------- görünümler ---------- */
@@ -334,7 +342,7 @@
     const b = S.bulucu; if (b.bitti || b.yukleniyor) return;
     b.yukleniyor = true;
     try {
-      const r = await rpc("urun_ara", { p: { ...parametre("urun"), sirala: "rastgele", tohum: b.tohum, limit: 40, offset: b.liste.length } });
+      const r = await rpc("urun_ara", { p: { ...parametre("urun"), sirala: "rastgele", tr_agirlik: S.bulucuTR, tohum: b.tohum, limit: 40, offset: b.liste.length } });
       b.liste.push(...r.satirlar); b.toplam = r.toplam; b.bitti = b.liste.length >= r.toplam || !r.satirlar.length;
     } catch (e) { bildir(hataMetni(e), true); b.bitti = true; }
     finally { b.yukleniyor = false; }
@@ -343,17 +351,18 @@
     if (S.sekme !== "bulucu") return;
     const b = S.bulucu, kalan = (b.toplam || 0) - b.i;
     $("#sonucSayi").innerHTML = `<b>${sayi.format(Math.max(0, kalan))}</b> ürün sırada · ${b.kaydedilen} kaydedildi · ${b.gecilen} geçildi`;
-    if (b.i >= b.liste.length) { $("#gorunum").innerHTML = b.liste.length ? bos("Deste bitti.", `<p><button class="daha" type="button" data-yenidesteyi>Yeniden karıştır</button></p>`) : bosSonuc("urun"); return; }
+    if (b.i >= b.liste.length) { $("#gorunum").innerHTML = b.liste.length ? bulucuTRHtml() + bos("Deste bitti.", `<p><button class="daha" type="button" data-yenidesteyi>Yeniden karıştır</button></p>`) : bosSonuc("urun"); return; }
     const kart = (p, arka) => { URUN.set(p.id, p); return `<div class="bkart${arka ? " arka" : ""}" ${arka ? 'aria-hidden="true"' : 'id="ustKart"'}>
       <span class="damga kay">Kaydet</span><span class="damga gec">Geç</span>${gorsel(p.gorsel, p.nis, true)}
       <div class="kart-ic"><div class="kart-ad">${esc(p.ad)}</div>${fiyatHtml(p)}<div class="alt">${bayrak(p.ulke)} ${esc(p.alan)} · ${esc(nisOf(p.nis).ad)} · ${once(p.eklenme)}</div></div></div>`; };
     const p = b.liste[b.i], sonraki = b.liste[b.i + 1];
-    $("#gorunum").innerHTML = `<div class="bulucu"><div class="deste">${sonraki ? kart(sonraki, true) : ""}${kart(p)}</div>
+    $("#gorunum").innerHTML = `<div class="bulucu">${bulucuTRHtml()}<div class="deste">${sonraki ? kart(sonraki, true) : ""}${kart(p)}</div>
       <div class="b-dugmeler"><button type="button" data-bk="gec" aria-label="Geç">✕</button><button class="buyuk" type="button" data-bk="kay" aria-label="Kaydet">♥</button><button type="button" data-bk="ac" aria-label="Ayrıntılar">↗</button></div>
       <p class="b-ipucu">Kartı sağa kaydır ya da → ile kaydet, sola ya da ← ile geç. Enter ayrıntıyı açar.</p></div>`;
     surukle($("#ustKart"));
     if (b.liste.length - b.i < 8) bulucuDoldur();
   }
+  const bulucuTRHtml = () => `<label class="kutu tr-agirlik"><input type="checkbox" id="bulucuTR" ${S.bulucuTR ? "checked" : ""}> 🇹🇷 Türkiye ağırlıklı <small>Türk mağazalarının ürünleri daha sık gelir</small></label>`;
   function bulucuKarar(k) {
     const b = S.bulucu, p = b.liste[b.i];
     if (!p) return;
@@ -482,7 +491,7 @@
     try {
       const [mr, ur] = await Promise.all([
         m ? null : rpc("magaza_ara", { p: { id: mid, limit: 1 } }),
-        rpc("urun_ara", { p: { magaza_id: mid, limit: 24 } })
+        rpc("urun_ara", { p: { magaza_id: mid, sirala: "satis-sira", limit: 24 } })
       ]);
       if (mr) { m = mr.satirlar[0]; if (m) MAGAZA.set(mid, m); }
       urunler = ur;
@@ -498,7 +507,8 @@
         ${p.para !== "TRY" && p.fiyat_tl ? `<p class="alt" style="margin:0">≈ ${tl(p.fiyat_tl)}</p>` : ""}
         <p class="alt" style="white-space:normal">${esc(nisOf(p.nis).ad)} · mağazada ${once(p.eklenme)} yayına girdi${p.kaldirildi ? " · <b>mağaza bu ürünü kaldırdı</b>" : ""}</p>
         <div class="d-eylem" style="padding:12px 0 0">${disLink(urunUrl(p), "Ürüne git", "birincil")}<button class="ikincil" type="button" data-kaydet="u:${p.id}">${S.kayit.u.has(p.id) ? "♥ Kaydedildi" : "♡ Ürünü kaydet"}</button>
-        ${p.anahtar ? `<button class="ikincil" type="button" data-trend="${esc(p.anahtar)}" data-trend-ad="${esc(p.ad)}">Bu ürünü satan diğer mağazalar</button>` : ""}</div></div></div>` : ""}
+        ${p.grup || p.anahtar ? `<button class="ikincil" type="button" data-trend="${esc(p.grup || p.anahtar)}" data-trend-ad="${esc(p.ad)}">Bu ürünü satan diğer mağazalar</button>` : ""}</div></div></div>
+      <div class="takip" id="satisTakip" data-urun="${p.id}">${yukleniyor()}</div>` : ""}
       <div class="d-ozellik">
         <div><span>Durum</span><b>${durumRozet(m.durum)}</b></div>
         <div><span>Ülke</span><b>${m.ulke ? bayrak(m.ulke) + " " + esc(ulkeAdi(m.ulke)) : "–"}</b></div>
@@ -512,8 +522,47 @@
       <div class="d-eylem">${disLink("https://" + m.alan, "Mağazayı aç", p ? "ikincil" : "birincil")}<button class="ikincil" type="button" data-kaydet="m:${m.id}">${S.kayit.m.has(m.id) ? "♥ Mağaza kaydedildi" : "♡ Mağazayı kaydet"}</button>
         <button class="ikincil" type="button" data-benzer="${esc(m.nis)}">Bu nişteki diğer ürünler</button></div>
       ${m.durum === "sifreli" ? `<p class="d-not">Bu mağaza henüz şifreli: kurulum aşamasında. Her gün kontrol ediliyor; açıldığı gün ürünleri burada görünecek.</p>` : ""}
-      ${digerleri.length ? `<div class="d-alt"><h3>Bu mağazanın ${p ? "diğer " : ""}ürünleri (${sayi.format(urunler.toplam - (p ? 1 : 0))}, en yeniler)</h3><div class="izgara">${digerleri.slice(0, 12).map(urunKart).join("")}</div></div>` : ""}`;
+      ${digerleri.length ? `<div class="d-alt"><h3>Bu mağazanın ${p ? "diğer " : ""}ürünleri (${sayi.format(urunler.toplam - (p ? 1 : 0))}, ${digerleri.some(x => x.satis_sira) ? "en çok satandan başlayarak" : "en yeniler"})</h3><div class="izgara">${digerleri.slice(0, 12).map(urunKart).join("")}</div></div>` : ""}`;
     dlg.scrollTop = 0;
+    if (p) satisTakipYukle(p.id);
+  }
+
+  /* ---------- satış takibi ---------- */
+  const takipTarihi = () => depo.al("takipTarihi", gunAnahtar(new Date(Date.now() - 7 * GUN)));
+  const siraYazi = s => s == null ? "listede yok" : `#${s}`;
+  async function satisTakipYukle(uid) {
+    const t = takipTarihi();
+    let r;
+    try { r = await rpc("satis_takip", { urun: uid, baslangic: new Date(t + "T00:00:00").toISOString() }); }
+    catch (e) { const el = $("#satisTakip"); if (el) el.innerHTML = `<p class="ipucu">${esc(hataMetni(e))}</p>`; return; }
+    const el = $("#satisTakip");
+    if (el && Number(el.dataset.urun) === uid) el.innerHTML = satisTakipHtml(r, t);
+  }
+  function satisTakipHtml(r, t) {
+    const baslik = `<h3>Satış takibi <button class="yardim" type="button" data-yardim-satis aria-expanded="false" aria-label="Satış takibi nasıl çalışır">?</button></h3>
+      <p class="yardim-metin" id="y-satis" hidden>Shopify satış adedini kimseye göstermez. Ama her mağazanın "en çok satanlar" sıralamasını gerçek satışlara göre kendisi hesaplar ve bu sıralama herkese açıktır. Bu ürünün o listedeki yerini her taramada (günde iki kez) kaydediyoruz. Yukarı çıkması satış yaptığı anlamına gelir. Buradaki sayılar adet değil, sıralamadaki yükseliş sayısıdır.</p>`;
+    if (!r || !r.takip_baslangic) return baslik + `<p class="ipucu">Bu mağazanın "en çok satanlar" sıralaması henüz okunmadı. Bir sonraki taramada takip başlar.</p>`;
+    const yuk = n => `<em class="${n ? "iyi" : ""}">${n ? `↑ ${n} kez yükseldi` : "hareket yok"}</em>`;
+    return baslik + `<div class="takip-izgara">
+      <div class="takip-kutu"><span>Takip başladığından beri</span><small>${gunKisa.format(new Date(r.takip_baslangic))}</small>
+        <b>${siraYazi(r.ilk_sira)} → ${siraYazi(r.simdi_sira)}</b>${yuk(r.toplam_yukselis)}</div>
+      <div class="takip-kutu"><span>Seçtiğin tarihten beri</span>
+        <label class="tarih-sec"><span class="sr">Başlangıç tarihi</span><input type="date" id="takipTarih" value="${t}" max="${gunAnahtar(new Date())}"></label>
+        ${r.baslangic_biliniyor ? `<b>${siraYazi(r.baslangic_sira)} → ${siraYazi(r.simdi_sira)}</b>${yuk(r.yukselis_baslangictan)}`
+          : `<em>Bu ürünün takibi ${gunKisa.format(new Date(r.takip_baslangic))} tarihinde başladı; daha eski bir tarih için veri yok.</em>`}</div>
+    </div>${siraGrafik(r)}`;
+  }
+  // Sıralama geçmişi basamak çizgisi: yukarısı #1, en altı "listede yok".
+  function siraGrafik(r) {
+    if (!r.olaylar.length) return "";
+    const nok = [[Date.parse(r.takip_baslangic), r.ilk_sira], ...r.olaylar.map(o => [Date.parse(o.zaman), o.yeni]), [Date.now(), r.simdi_sira]];
+    const dip = Math.max(2, ...nok.map(n => n[1] || 0)) + 1, t0 = nok[0][0], t1 = nok[nok.length - 1][0];
+    const x = t => 34 + (t - t0) / Math.max(1, t1 - t0) * 560, y = s => 8 + ((s ?? dip) - 1) / (dip - 1) * 60;
+    let d = `M${x(nok[0][0]).toFixed(1)},${y(nok[0][1]).toFixed(1)}`;
+    for (const [t, s] of nok.slice(1)) d += ` H${x(t).toFixed(1)} V${y(s).toFixed(1)}`;
+    return `<svg class="sira-grafik" viewBox="0 0 600 76" role="img" aria-label="Sıralama geçmişi, ${r.olaylar.length} değişim">
+      <text x="2" y="12">#1</text><text x="2" y="70">yok</text><line x1="34" x2="594" y1="8" y2="8"/><line x1="34" x2="594" y1="68" y2="68"/>
+      <path d="${d}"/></svg>`;
   }
   const urunAc = uid => { const p = URUN.get(uid); if (p) magazaAc(p.magaza_id, uid); };
 
@@ -608,7 +657,8 @@
       bolum("paralar", "Para Birimi", listeBolumu("paralar"), "urun magaza bulucu") +
       bolum("diller", "Dil", listeBolumu("diller"), "urun magaza bulucu") +
       bolum("tldler", "Domain Uzantısı", listeBolumu("tldler"), "urun magaza bulucu") +
-      `<section class="fb" data-sadece="urun bulucu"><label class="kutu"><input id="fIndirim" type="checkbox" ${T.indirim ? "checked" : ""}> Sadece indirimdeki ürünler</label></section>`;
+      `<section class="fb" data-sadece="urun bulucu"><label class="kutu"><input id="fIndirim" type="checkbox" ${T.indirim ? "checked" : ""}> Sadece indirimdeki ürünler</label>
+        <label class="kutu" style="margin-top:10px"><input id="fSatista" type="checkbox" ${T.satista ? "checked" : ""}> Sadece son 7 günde satışı hareketlenenler</label></section>`;
     govde.querySelectorAll("[data-sadece]").forEach(el => el.toggleAttribute("data-gizli", !el.dataset.sadece.split(" ").includes(anahtar)));
     govde.scrollTop = kaydirma;
     uygulaDurum();
@@ -639,6 +689,7 @@
     if (magaza) f.durumlar.forEach(k => ekle(DURUM[k][0], ["durumlar", k]));
     if (magaza && (f.amin !== "" || f.amax !== "")) ekle(`${f.amin || 0}–${f.amax || "∞"} ürün`, ["adet"]);
     if (!trend && !magaza && f.indirim) ekle("İndirimde", ["indirim"]);
+    if (!trend && !magaza && f.satista) ekle("Satışı hareketlenenler", ["satista"]);
     $("#aktifler").innerHTML = c.length ? c.join("") + `<button class="metin-btn" type="button" data-hepsini-kaldir>Tümünü temizle</button>` : "";
     const n = c.length - (f.ara ? 1 : 0), el = $("#filtreSayi");
     el.hidden = !n; el.textContent = n;
@@ -716,6 +767,7 @@
         fb.querySelector(".liste-ara")?.insertAdjacentHTML("afterend", seciliOzet(k));
         govde.scrollTop = sk;
       } else if (t.id === "fIndirim") T.indirim = t.checked;
+      else if (t.id === "fSatista") T.satista = t.checked;
       else if (t.id === "fMbAc") { T.magazaBasi = t.checked ? Number($("#fMb").value) : 0; $("#fMb").disabled = !t.checked; mbYaz(); }
       uygulaDurum();
     });
@@ -738,6 +790,18 @@
 
     // Yönetim paneli
     $("#gorunum").addEventListener("input", e => { if (e.target.id === "uyeAra") { uyeAra = e.target.value; const pos = e.target.selectionStart; yonetimCiz(false); const el = $("#uyeAra"); el.focus(); el.setSelectionRange(pos, pos); } });
+    $("#gorunum").addEventListener("change", e => {
+      if (e.target.id === "bulucuTR") { S.bulucuTR = e.target.checked; depo.yaz("bulucuTR", S.bulucuTR); bulucuHazirla(); }
+    });
+    dlg.addEventListener("change", e => {
+      if (e.target.id !== "takipTarih" || !e.target.value) return;
+      depo.yaz("takipTarihi", e.target.value);
+      satisTakipYukle(Number($("#satisTakip").dataset.urun));
+    });
+    dlg.addEventListener("click", e => {
+      const b = e.target.closest("[data-yardim-satis]"); if (!b) return;
+      const p = $("#y-satis"); p.hidden = !p.hidden; b.setAttribute("aria-expanded", !p.hidden);
+    });
     $("#gorunum").addEventListener("change", e => {
       const t = e.target; if (!t.matches("[data-bitis]") || !t.value) return;
       const uid = t.closest("[data-uye]").dataset.uye;
