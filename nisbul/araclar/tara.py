@@ -93,8 +93,9 @@ def urun_satiri(u, magaza_id, para, kurlar, siniflandir, simdi):
         "shopify_id": int(u["id"]),
         "ad": (u.get("title") or "").strip()[:200] or "(adsız)",
         "handle": (u.get("handle") or "")[:200],
-        "urun_tipi": tip[:100] or None,
-        "etiketler": ", ".join(etiketler)[:300] or None,
+        # Etiket ve ürün tipi sadece sınıflandırmada kullanılır; yer kazanmak için saklanmaz.
+        "urun_tipi": None,
+        "etiketler": None,
         "fiyat": fiyat,
         "eski_fiyat": sayi(v.get("compare_at_price")),
         "para": para,
@@ -108,7 +109,7 @@ def urun_satiri(u, magaza_id, para, kurlar, siniflandir, simdi):
     }
 
 
-def magaza_isle(m, siniflandir, kurlar, en_cok_sayfa):
+def magaza_isle(m, siniflandir, kurlar, en_cok_sayfa, en_cok_satan=10):
     """Ağ işlerini yapar, veritabanına yazılacakları döndürür. Veritabanına dokunmaz."""
     alan, taban, simdi = m["alan"], "https://" + m["alan"], SIMDI()
     ham, sifreli, hata, siralar = [], False, None, None
@@ -176,12 +177,13 @@ def magaza_isle(m, siniflandir, kurlar, en_cok_sayfa):
     satirlar = []
     if ham:
         para = g.get("para") or m.get("para") or "USD"
-        satirlar = [urun_satiri(u, m["id"], para, kurlar, siniflandir, simdi.isoformat()) for u in ham if u.get("id")]
-        nisler = Counter(s["nis"] for s in satirlar if s["nis"] != "diger")
+        tum = [urun_satiri(u, m["id"], para, kurlar, siniflandir, simdi.isoformat()) for u in ham if u.get("id")]
+        # Mağazanın nişi tüm katalogdan belirlenir; saklanan ise sadece en çok satanlardır.
+        nisler = Counter(s["nis"] for s in tum if s["nis"] != "diger")
         if nisler:
             g["nis"] = nisler.most_common(1)[0][0]
-            g["kategori"] = next(s["kategori"] for s in satirlar if s["nis"] == g["nis"])
-        g.update(durum="acik", urun_sayisi=len(satirlar), hata_sayisi=0, sonraki_tarama=(simdi + timedelta(hours=10)).isoformat())
+            g["kategori"] = next(s["kategori"] for s in tum if s["nis"] == g["nis"])
+        g.update(durum="acik", urun_sayisi=len(tum), hata_sayisi=0, sonraki_tarama=(simdi + timedelta(hours=10)).isoformat())
         if not m.get("acilis"):
             g["acilis"] = simdi.isoformat()
         # Satış sinyali: mağazanın "en çok satanlar" sıralaması. Okunamazsa None; eski sıralama silinmez.
@@ -194,6 +196,13 @@ def magaza_isle(m, siniflandir, kurlar, en_cok_sayfa):
                     siralar = [{"shopify_id": sid, "sira": i + 1} for i, sid in enumerate(liste)]
         except Exception:
             pass
+        # Sadece en çok satan "en_cok_satan" ürün saklanır. Sıralama okunamadıysa en yeniler.
+        if siralar:
+            tut = [x["shopify_id"] for x in siralar[:en_cok_satan]]
+        else:
+            tut = [x["shopify_id"] for x in sorted(tum, key=lambda x: x["yayin"] or "", reverse=True)[:en_cok_satan]]
+        secili = set(tut)
+        satirlar = [x for x in tum if x["shopify_id"] in secili]
     elif sifreli:
         yas = (simdi - datetime.fromisoformat(m["ilk_gorulme"].replace("Z", "+00:00"))).days if m.get("ilk_gorulme") else 0
         g.update(durum="sifreli", hata_sayisi=0, sonraki_tarama=(simdi + timedelta(hours=10 if yas < 30 else 72)).isoformat())
@@ -210,21 +219,26 @@ def magaza_isle(m, siniflandir, kurlar, en_cok_sayfa):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--limit", type=int, default=3000, help="bu çalışmada en çok kaç mağaza taransın")
-    ap.add_argument("--sayfa", type=int, default=4, help="mağaza başına en çok kaç sayfa (250 ürün/sayfa)")
+    ap.add_argument("--sayfa", type=int, default=1, help="mağaza başına en çok kaç sayfa (250 ürün/sayfa)")
+    ap.add_argument("--gun", type=int, default=0, help="kaç günlük veri tutulsun (0 = gün sınırı yok, sadece ürün tavanı)")
+    ap.add_argument("--en-cok-satan", dest="en_cok_satan", type=int, default=10, help="mağaza başına saklanan en çok satan ürün")
+    ap.add_argument("--en-cok-urun", dest="en_cok_urun", type=int, default=500000, help="toplam ürün tavanı")
     ap.add_argument("--is", dest="isci", type=int, default=16, help="aynı anda taranan mağaza sayısı")
     ap.add_argument("--sure", type=int, default=240, help="dakika cinsinden süre sınırı")
     a = ap.parse_args()
 
     sb = Supabase()
+    # Önce yer aç: ürün tavanı (ve varsa gün sınırı) aşılmışsa en eski mağazalar silinir.
+    print("Eski veri temizliği:", json.dumps(sb.rpc("eski_verileri_sil", {"gun": a.gun, "en_cok_urun": a.en_cok_urun}), ensure_ascii=False))
     siniflandir = siniflandirici(taksonomi_yukle())
     kurlar = tl_kurlari()
     bitis = time.time() + a.sure * 60
     zaman = quote(SIMDI().isoformat())
     alanlar = "select=id,alan,ad,durum,para,myshopify,acilis,hata_sayisi,ilk_gorulme"
     # Türkiye'ye satan mağazalar (ülke, para, dil ya da .tr uzantısı) her çalışmada sıranın başına alınır.
-    oncelikli = sb.sec("magazalar", f"{alanlar}&sonraki_tarama=lte.{zaman}"
-                                    f"&or=(ulke.eq.TR,para.eq.TRY,dil.eq.tr,tld.like.*.tr)&order=sonraki_tarama.asc&limit={a.limit}") or []
-    digerleri = sb.sec("magazalar", f"{alanlar}&sonraki_tarama=lte.{zaman}&order=sonraki_tarama.asc&limit={a.limit}") or []
+    oncelikli = sb.sec_hepsi("magazalar", f"{alanlar}&sonraki_tarama=lte.{zaman}"
+                                          f"&or=(ulke.eq.TR,para.eq.TRY,dil.eq.tr,tld.like.*.tr)&order=sonraki_tarama.asc,id.asc", a.limit)
+    digerleri = sb.sec_hepsi("magazalar", f"{alanlar}&sonraki_tarama=lte.{zaman}&order=sonraki_tarama.asc,id.asc", a.limit)
     gorulen = {m["id"] for m in oncelikli}
     sirada = (oncelikli + [m for m in digerleri if m["id"] not in gorulen])[:a.limit]
     print(f"Türkiye öncelikli: {len(oncelikli)}")
@@ -232,7 +246,7 @@ def main():
 
     sayac, urun_toplam = Counter(), 0
     with ThreadPoolExecutor(a.isci) as havuz:
-        isler = {havuz.submit(magaza_isle, m, siniflandir, kurlar, a.sayfa): m for m in sirada}
+        isler = {havuz.submit(magaza_isle, m, siniflandir, kurlar, a.sayfa, a.en_cok_satan): m for m in sirada}
         for is_ in as_completed(isler):
             if time.time() > bitis:
                 print("Süre doldu, kalan mağazalar bir sonraki çalışmaya kaldı.")
@@ -246,6 +260,9 @@ def main():
                 sb.guncelle("magazalar", f"id=eq.{m['id']}", g)
                 if siralar is not None:
                     sayac["satis_olayi"] += sb.rpc("satis_sira_yaz", {"veri": {"magaza_id": m["id"], "siralar": siralar}}) or 0
+                if satirlar:
+                    # İlk "en_cok_satan" dışına düşen ürünler silinir (kaydedilenler hariç).
+                    sayac["dusen_urun"] += sb.rpc("magaza_urunlerini_kirp", {"magaza": m["id"], "tut": [x["shopify_id"] for x in satirlar]}) or 0
                 sayac[g.get("durum", "?")] += 1
             except Exception as e:
                 sayac["yazma_hatasi"] += 1

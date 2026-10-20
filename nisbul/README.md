@@ -25,6 +25,7 @@ Vercel'deki site
 - **Satış takibi:** Shopify satış adedini açıklamaz. Ama her mağazanın "en çok satanlar" sıralamasını gerçek satışlara göre kendisi hesaplar ve bu sıralama herkese açıktır. Her taramada bu sıralama kaydedilir; ürün detayında iki takip vardır: *takip başladığından beri* ve *seçtiğin tarihten beri*. Sayılar adet değil, sıralamadaki yükseliş sayısıdır.
 - **Türkiye önceliği:** ülkesi TR, para birimi TRY, dili Türkçe ya da uzantısı .tr olan mağazalar (açık ya da açılmak üzere) her taramada sıranın başına alınır. Bulucu "Türkiye ağırlıklı" çalışır, ürünlerde tek tık 🇹🇷 Türkiye filtresi var.
 - Tarama **günde iki kez** (06:17 ve 18:17) çalışır; açık mağazalar her çalışmada yeniden taranır, yeni eklenen ürünler "yayına girdiği gün" ile görünür.
+- **Saklanan veri:** her mağazanın "en çok satanlar" sıralamasındaki **ilk 10 ürünü** saklanır; listeden düşen ürün silinir, yerine giren eklenir (kaydedilen ürünler hariç). Sıralaması okunamayan mağazalarda en yeni 10 ürün alınır. Toplam ürün **500 bini** geçerse en eski mağazalar silinir; böylece ücretsiz 500 MB dolmaz. Tavan ve ürün sayısı `tara.py --en-cok-urun` ve `--en-cok-satan` ile, isteğe bağlı gün sınırı `--gun` ile değiştirilebilir.
 
 ## Kurulum (bir kez, ~30 dakika)
 

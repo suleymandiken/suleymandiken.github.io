@@ -210,7 +210,7 @@
     const o = OZET;
     $("#istatistik").innerHTML = [[o.yeni_24s, "son 24 saatte yeni mağaza"], [o.yeni_7g, "son 7 günde"], [o.acik, "açık mağaza"], [o.sifreli, "açılmak üzere"], [o.urun, "ürün"], [o.trend, "yükselen ürün"]]
       .map(([s, t]) => `<div><b>${sayi.format(s || 0)}</b><span>${t}</span></div>`).join("")
-      + `<p class="son-tarama">Son tarama: ${o.son_tarama ? once(o.son_tarama) : "henüz yok"}</p>`;
+      + `<p class="son-tarama">Son tarama: ${o.son_tarama ? once(o.son_tarama) : "henüz yok"}${o.veri_gun ? ` · Veri: son ${o.veri_gun} gün` : ""}</p>`;
   }
 
   const SIRALA = {

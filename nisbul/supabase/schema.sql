@@ -103,8 +103,9 @@ create index if not exists urunler_eklenme on public.urunler (eklenme desc, id d
 create index if not exists urunler_eklenme_gun on public.urunler (eklenme_gun);
 create index if not exists urunler_kategori on public.urunler (kategori, eklenme desc);
 create index if not exists urunler_fiyat on public.urunler (fiyat_tl);
-create index if not exists urunler_anahtar on public.urunler (anahtar);
-create index if not exists urunler_ad_trgm on public.urunler using gin (ad gin_trgm_ops);
+-- Ücretsiz katmanda yer kazanmak için: trigram arama indeksi ürün başına en çok yer kaplayandı; anahtar araması grup üzerinden yapılıyor.
+drop index if exists public.urunler_ad_trgm;
+drop index if exists public.urunler_anahtar;
 alter table public.urunler enable row level security;
 drop policy if exists urun_oku on public.urunler;
 create policy urun_oku on public.urunler for select to authenticated using ((select public.aktif_uye()));
@@ -213,7 +214,7 @@ language plpgsql security definer set search_path = public as $$
 declare n int;
 begin
   -- 180 günden eski satış hareketleri silinir; ücretsiz katmanda yer kalsın.
-  delete from satis_olaylari where zaman < now() - interval '180 days';
+  delete from satis_olaylari where zaman < now() - interval '30 days';
   -- Son 7 günde sıralamada yukarı çıkış (ya da listeye giriş) sayısı.
   update urunler set satis_hareket_7g = 0 where satis_hareket_7g <> 0;
   update urunler u set satis_hareket_7g = x.n
@@ -246,6 +247,60 @@ begin
   return n;
 end $$;
 revoke all on function public.trend_guncelle() from public, anon, authenticated;
+
+-- ============ Veri penceresi ============
+-- Toplam ürün "en_cok_urun"u aşarsa en eski mağazalar (ürünleri ve satış geçmişleriyle) silinir; ücretsiz katman dolmaz.
+-- İsteğe bağlı "gun" > 0 ise o günden eski mağazalar da silinir.
+-- Bir üyenin kaydettiği ürünün ya da mağazanın mağazası silinmez.
+-- Ürün bazında değil mağaza bazında silinir: aksi halde her gün yeniden taranan mağazanın ürünleri "yeni" diye geri gelirdi.
+create or replace function public.eski_verileri_sil(gun int default 0, en_cok_urun bigint default 500000) returns jsonb
+language plpgsql security definer set search_path = public as $$
+declare n_gun int := 0; n_tavan int := 0;
+begin
+  -- gun = 0: gün sınırı yok, sadece ürün tavanı uygulanır.
+  if gun > 0 then
+    with korunan as (
+      select k.ref as magaza_id from kayitlar k where k.tur = 'm'
+      union select u.magaza_id from kayitlar k join urunler u on u.id = k.ref where k.tur = 'u'
+    ), sil as (
+      delete from magazalar m where m.ilk_gorulme < now() - make_interval(days => gun)
+        and m.id not in (select magaza_id from korunan)
+      returning 1
+    )
+    select count(*) into n_gun from sil;
+  end if;
+
+  if (select count(*) from urunler) > en_cok_urun then
+    with korunan as (
+      select k.ref as magaza_id from kayitlar k where k.tur = 'm'
+      union select u.magaza_id from kayitlar k join urunler u on u.id = k.ref where k.tur = 'u'
+    ), sayim as (
+      select magaza_id, count(*) as n from urunler group by magaza_id
+    ), kumulatif as (
+      -- En yeniden eskiye ürünleri biriktir; tavanı aşan eski mağazalar silinir.
+      select m.id, sum(coalesce(s.n, 0)) over (order by m.ilk_gorulme desc, m.id desc) as toplam
+      from magazalar m left join sayim s on s.magaza_id = m.id
+      where m.id not in (select magaza_id from korunan)
+    ), sil as (
+      delete from magazalar m using kumulatif k where m.id = k.id and k.toplam > en_cok_urun
+      returning 1
+    )
+    select count(*) into n_tavan from sil;
+  end if;
+  return jsonb_build_object('gun_doldugu_icin', n_gun, 'tavan_icin', n_tavan, 'kalan_urun', (select count(*) from urunler));
+end $$;
+
+-- Mağazanın sadece en çok satan ürünleri saklanır; listeden düşenler silinir (kaydedilenler hariç).
+create or replace function public.magaza_urunlerini_kirp(magaza bigint, tut bigint[]) returns int
+language plpgsql security definer set search_path = public as $$
+declare n int;
+begin
+  if coalesce(cardinality(tut), 0) = 0 then return 0; end if;  -- boş liste her şeyi silmesin
+  delete from urunler u where u.magaza_id = magaza and not (u.shopify_id = any(tut))
+    and not exists (select 1 from kayitlar k where k.tur = 'u' and k.ref = u.id);
+  get diagnostics n = row_count;
+  return n;
+end $$;
 
 -- ============ Kaydedilenler ============
 create table if not exists public.kayitlar (
@@ -445,6 +500,7 @@ begin
     'yeni_24s', (select count(*) from magazalar where durum <> 'yeni' and durum <> 'kapali' and ilk_gorulme > now() - interval '24 hours'),
     'yeni_7g', (select count(*) from magazalar where durum <> 'yeni' and durum <> 'kapali' and ilk_gorulme > now() - interval '7 days'),
     'trend', (select count(*) from trendler where yeni_magaza_14g >= 2),
+    'veri_gun', (select ceil(extract(epoch from now() - min(ilk_gorulme)) / 86400)::int from magazalar),
     'son_tarama', (select max(son_tarama) from magazalar),
     'ulkeler', (select coalesce(jsonb_object_agg(ulke, n), '{}') from (select ulke, count(*) n from magazalar where ulke is not null and durum <> 'yeni' group by ulke) x),
     'paralar', (select coalesce(jsonb_object_agg(para, n), '{}') from (select para, count(*) n from magazalar where para is not null and durum <> 'yeni' group by para) x),
@@ -552,6 +608,10 @@ grant execute on function public.urun_ara(jsonb), public.magaza_ara(jsonb), publ
   public.uyeler(), public.uyelik_ver(uuid, int), public.uyelik_bitis_ayarla(uuid, timestamptz), public.rol_ata(uuid, text),
   public.admin_mi(), public.aktif_uye() to authenticated;
 grant execute on function public.trend_guncelle() to service_role;
+revoke all on function public.eski_verileri_sil(int, bigint) from public, anon, authenticated;
+grant execute on function public.eski_verileri_sil(int, bigint) to service_role;
+revoke all on function public.magaza_urunlerini_kirp(bigint, bigint[]) from public, anon, authenticated;
+grant execute on function public.magaza_urunlerini_kirp(bigint, bigint[]) to service_role;
 grant select on public.satis_olaylari to authenticated;
 revoke insert, update, delete on public.satis_olaylari from authenticated;
 revoke all on public.satis_olaylari from anon;
@@ -559,3 +619,6 @@ revoke all on function public.satis_sira_yaz(jsonb), public.gorsel_hash_yaz(json
 grant execute on function public.satis_sira_yaz(jsonb), public.gorsel_hash_yaz(jsonb) to service_role;
 revoke all on function public.satis_takip(bigint, timestamptz) from public, anon;
 grant execute on function public.satis_takip(bigint, timestamptz) to authenticated;
+
+-- PostgREST (Supabase API) yeni fonksiyonları hemen görsün.
+notify pgrst, 'reload schema';
