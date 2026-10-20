@@ -23,7 +23,7 @@ from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from urllib.parse import quote
+from urllib.parse import quote, unquote
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from ortak import Supabase, anahtar, getir, siniflandirici, taksonomi_yukle, tl_kurlari  # noqa: E402
@@ -53,6 +53,20 @@ def vitrin_bilgisi(html):
     if m := re.search(r"<title[^>]*>\s*([^<]{1,120}?)\s*</title>", html, re.I):
         b["baslik"] = re.sub(r"\s+", " ", m.group(1)).strip()
     return b
+
+
+def satis_sirasi(html, handle_id, en_cok=50):
+    """"En çok satanlar" sayfasındaki ürün bağlantılarının sırası → shopify_id listesi.
+    Shopify bu sıralamayı mağazanın gerçek satışlarına göre kendisi hesaplar."""
+    sira, gorulen = [], set()
+    for h in re.findall(r'href="(?:https?://[^"/]+)?(?:/[a-z]{2}(?:-[a-zA-Z]{2})?)?(?:/collections/[^"/]+)?/products/([^"?#/]+)', html):
+        h = unquote(h).lower()
+        if h in handle_id and h not in gorulen:
+            gorulen.add(h)
+            sira.append(handle_id[h])
+            if len(sira) >= en_cok:
+                break
+    return sira
 
 
 def gorsel_kucult(src):
@@ -97,7 +111,7 @@ def urun_satiri(u, magaza_id, para, kurlar, siniflandir, simdi):
 def magaza_isle(m, siniflandir, kurlar, en_cok_sayfa):
     """Ağ işlerini yapar, veritabanına yazılacakları döndürür. Veritabanına dokunmaz."""
     alan, taban, simdi = m["alan"], "https://" + m["alan"], SIMDI()
-    ham, sifreli, hata = [], False, None
+    ham, sifreli, hata, siralar = [], False, None, None
     for sayfa in range(1, en_cok_sayfa + 1):
         try:
             y = getir(f"{taban}/products.json?limit=250&page={sayfa}")
@@ -167,12 +181,22 @@ def magaza_isle(m, siniflandir, kurlar, en_cok_sayfa):
         if nisler:
             g["nis"] = nisler.most_common(1)[0][0]
             g["kategori"] = next(s["kategori"] for s in satirlar if s["nis"] == g["nis"])
-        g.update(durum="acik", urun_sayisi=len(satirlar), hata_sayisi=0, sonraki_tarama=(simdi + timedelta(hours=20)).isoformat())
+        g.update(durum="acik", urun_sayisi=len(satirlar), hata_sayisi=0, sonraki_tarama=(simdi + timedelta(hours=10)).isoformat())
         if not m.get("acilis"):
             g["acilis"] = simdi.isoformat()
+        # Satış sinyali: mağazanın "en çok satanlar" sıralaması. Okunamazsa None; eski sıralama silinmez.
+        handle_id = {(u.get("handle") or "").lower(): int(u["id"]) for u in ham if u.get("id") and u.get("handle")}
+        try:
+            y = getir(f"{taban}/collections/all?sort_by=best-selling", zaman_asimi=20)
+            if y.durum == 200:
+                liste = satis_sirasi(y.metin(), handle_id)
+                if len(liste) >= 2 or len(handle_id) == 1:
+                    siralar = [{"shopify_id": sid, "sira": i + 1} for i, sid in enumerate(liste)]
+        except Exception:
+            pass
     elif sifreli:
         yas = (simdi - datetime.fromisoformat(m["ilk_gorulme"].replace("Z", "+00:00"))).days if m.get("ilk_gorulme") else 0
-        g.update(durum="sifreli", hata_sayisi=0, sonraki_tarama=(simdi + timedelta(hours=20 if yas < 30 else 72)).isoformat())
+        g.update(durum="sifreli", hata_sayisi=0, sonraki_tarama=(simdi + timedelta(hours=10 if yas < 30 else 72)).isoformat())
     elif bilgi.get("myshopify") and hata == "HTTP 404":
         # Mağaza açık ama ürün listesini kapatmış; elimizdeki bilgiyle tutarız.
         g.update(durum="acik", hata_sayisi=0, sonraki_tarama=(simdi + timedelta(days=3)).isoformat())
@@ -180,7 +204,7 @@ def magaza_isle(m, siniflandir, kurlar, en_cok_sayfa):
         h = (m.get("hata_sayisi") or 0) + 1
         g.update(hata_sayisi=h, durum="kapali" if h >= 5 or (m.get("durum") == "yeni" and h >= 3) else m.get("durum") or "yeni",
                  sonraki_tarama=(simdi + timedelta(days=7 if h >= 5 else 2 ** min(h - 1, 3))).isoformat())
-    return m, g, satirlar
+    return m, g, satirlar, siralar
 
 
 def main():
@@ -196,8 +220,14 @@ def main():
     kurlar = tl_kurlari()
     bitis = time.time() + a.sure * 60
     zaman = quote(SIMDI().isoformat())
-    sirada = sb.sec("magazalar", f"select=id,alan,ad,durum,para,myshopify,acilis,hata_sayisi,ilk_gorulme"
-                                 f"&sonraki_tarama=lte.{zaman}&order=sonraki_tarama.asc&limit={a.limit}") or []
+    alanlar = "select=id,alan,ad,durum,para,myshopify,acilis,hata_sayisi,ilk_gorulme"
+    # Türkiye'ye satan mağazalar (ülke, para, dil ya da .tr uzantısı) her çalışmada sıranın başına alınır.
+    oncelikli = sb.sec("magazalar", f"{alanlar}&sonraki_tarama=lte.{zaman}"
+                                    f"&or=(ulke.eq.TR,para.eq.TRY,dil.eq.tr,tld.like.*.tr)&order=sonraki_tarama.asc&limit={a.limit}") or []
+    digerleri = sb.sec("magazalar", f"{alanlar}&sonraki_tarama=lte.{zaman}&order=sonraki_tarama.asc&limit={a.limit}") or []
+    gorulen = {m["id"] for m in oncelikli}
+    sirada = (oncelikli + [m for m in digerleri if m["id"] not in gorulen])[:a.limit]
+    print(f"Türkiye öncelikli: {len(oncelikli)}")
     print(f"Taranacak mağaza: {len(sirada)}")
 
     sayac, urun_toplam = Counter(), 0
@@ -209,21 +239,20 @@ def main():
                 havuz.shutdown(wait=False, cancel_futures=True)
                 break
             try:
-                m, g, satirlar = is_.result()
+                m, g, satirlar, siralar = is_.result()
                 if satirlar:
                     sb.ekle("urunler", satirlar, "magaza_id,shopify_id")
                     urun_toplam += len(satirlar)
                 sb.guncelle("magazalar", f"id=eq.{m['id']}", g)
+                if siralar is not None:
+                    sayac["satis_olayi"] += sb.rpc("satis_sira_yaz", {"veri": {"magaza_id": m["id"], "siralar": siralar}}) or 0
                 sayac[g.get("durum", "?")] += 1
             except Exception as e:
                 sayac["yazma_hatasi"] += 1
                 print(f"  yazma hatası: {str(e)[:200]}", file=sys.stderr)
 
+    # Trendler görsel eşleştirmeden sonra gorsel.py içinde hesaplanır.
     print("Sonuç:", json.dumps(dict(sayac), ensure_ascii=False), f"· {urun_toplam} ürün yazıldı")
-    try:
-        print(f"Trend tablosu güncellendi: {sb.rpc('trend_guncelle')} ürün grubu")
-    except Exception as e:
-        print(f"Trend güncellenemedi: {e}", file=sys.stderr)
 
 
 if __name__ == "__main__":

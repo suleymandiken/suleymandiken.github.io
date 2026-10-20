@@ -21,8 +21,10 @@ Vercel'deki site
 
 - **Açılmak üzere:** mağaza şifreli, yani kuruluyor. Her gün bakılır; açıldığı gün ürünleri gelir.
 - **Kaldırıldı:** mağazanın daha önce sattığı ama artık listelemediği ürün. Test edilip vazgeçilmiş ürünleri gösterir.
-- **Trendler:** aynı ürünün (başlığı normalize edilerek) kaç farklı mağazada satıldığı. Son 14 günde birden çok yeni mağaza ekliyorsa *yükselen*; toplam mağaza sayısı azsa *henüz doymamış*.
-- Açık mağazalar her gün yeniden taranır; yeni eklenen ürünler "yayına girdiği gün" ile görünür.
+- **Trendler:** aynı ürünün kaç farklı mağazada satıldığı. Eşleştirme önce **ürün görselinin parmak iziyle** yapılır (mağazalar aynı tedarikçi görselini kullanıp adı değiştirse de yakalanır), görseli olmayanlarda normalize başlıkla. Son 14 günde birden çok yeni mağaza ekliyorsa *yükselen*; toplam mağaza sayısı azsa *henüz doymamış*.
+- **Satış takibi:** Shopify satış adedini açıklamaz. Ama her mağazanın "en çok satanlar" sıralamasını gerçek satışlara göre kendisi hesaplar ve bu sıralama herkese açıktır. Her taramada bu sıralama kaydedilir; ürün detayında iki takip vardır: *takip başladığından beri* ve *seçtiğin tarihten beri*. Sayılar adet değil, sıralamadaki yükseliş sayısıdır.
+- **Türkiye önceliği:** ülkesi TR, para birimi TRY, dili Türkçe ya da uzantısı .tr olan mağazalar (açık ya da açılmak üzere) her taramada sıranın başına alınır. Bulucu "Türkiye ağırlıklı" çalışır, ürünlerde tek tık 🇹🇷 Türkiye filtresi var.
+- Tarama **günde iki kez** (06:17 ve 18:17) çalışır; açık mağazalar her çalışmada yeniden taranır, yeni eklenen ürünler "yayına girdiği gün" ile görünür.
 
 ## Kurulum (bir kez, ~30 dakika)
 
@@ -39,7 +41,7 @@ Vercel'deki site
 1. Bu depo → **Settings → Secrets and variables → Actions → New repository secret**:
    - `SUPABASE_URL`
    - `SUPABASE_SERVICE_KEY`
-2. **Actions** sekmesi → (soruyorsa) workflow'ları etkinleştir → **Nişbul günlük tarama** → **Run workflow**. İlk çalışma 1-3 saat sürebilir. Sonra her sabah 06:17'de kendiliğinden çalışır.
+2. **Actions** sekmesi → (soruyorsa) workflow'ları etkinleştir → **Nişbul günlük tarama** → **Run workflow**. İlk çalışma 1-3 saat sürebilir. Sonra her gün 06:17 ve 18:17'de kendiliğinden çalışır; bilgisayarının açık olması gerekmez.
 3. Kayıtlarda sadece sayılar görünür (kaç alan adı, kaç Shopify, kaç ürün). Mağaza adları bilerek yazılmaz, çünkü depo herkese açık ve veri senin avantajın.
 
 ### 3. Vercel (site), ücretsiz
@@ -74,13 +76,17 @@ Süre dolduğu an erişim veritabanı seviyesinde kapanır. Kullanıcı tarayıc
 - **whoisds adresi değişirse** keşif adımı "liste bulunamadı" yazar. Actions kayıtlarını ilk haftalarda kontrol et.
 - **Bazı mağazalar `/products.json`'u kapatır**; bunların ürünleri gelmez.
 - **Supabase ücretsiz katman 500 MB**'dır, yaklaşık 300-400 bin ürün eder. Dolmaya yaklaşınca Pro plana (aylık 25$) geçmek gerekir. Kullanım: Supabase → Reports.
-- **GitHub, 60 gün boyunca hiç commit gelmeyen** herkese açık depolarda zamanlanmış işleri durdurur. Arada bir commit at ya da Actions'tan yeniden etkinleştir.
+- **GitHub, 60 gün boyunca hiç commit gelmeyen** herkese açık depolarda zamanlanmış işleri durdurur. İş her çalışmada kendini yeniden etkinleştirerek bu sayacı sıfırlar; yine de ayda bir Actions sekmesine göz at.
+- **Satış takibi sıralamaya dayanır:** "en çok satanlar" sayfasını tema JavaScript ile çizen az sayıdaki mağazada sıra okunamaz; o mağazalarda takip boş kalır.
+
+## Şema güncellemesi
+`supabase/schema.sql` tekrar çalıştırılabilir; var olan veriyi silmez, eksik tablo ve sütunları ekler. Yeni bir sürüm geldiğinde önce Supabase SQL Editor'da bu dosyayı çalıştır, sonra kodu birleştir.
 - **Fiyatlar tarama günündeki kurla ₺'ye çevrilir** (open.er-api.com, ulaşılamazsa sabit tablo).
 
 ## Dosyalar
 - `index.html`, `app.js`, `style.css`: site
 - `taksonomi.json`: 26 kategori, 81 niş ve sınıflandırma anahtar kelimeleri (site ve tarayıcı ortak kullanır)
 - `supabase/schema.sql`: tablolar, erişim kuralları, arama ve yönetici fonksiyonları
-- `araclar/kesif.py`: yeni mağaza keşfi · `araclar/tara.py`: ürün tarama · `araclar/ortak.py`: ortak parçalar
+- `araclar/kesif.py`: yeni mağaza keşfi · `araclar/tara.py`: ürün ve satış sırası tarama · `araclar/gorsel.py`: görsel eşleştirme ve trend hesabı · `araclar/ortak.py`: ortak parçalar
 - `build.mjs`, `vercel.json`: Vercel derlemesi
 - Depo kökündeki `.github/workflows/nisbul-tarama.yml`: günlük zamanlama
