@@ -79,6 +79,18 @@ class Supabase:
     def sec(self, tablo, sorgu):
         return self.istek("GET", f"{tablo}?{sorgu}")
 
+    def sec_hepsi(self, tablo, sorgu, limit, sayfa=1000):
+        """Supabase tek istekte en fazla 1000 satır döndürür; limit'e kadar sayfa sayfa okur.
+        Sorgu kararlı bir sıralama (order=...) içermelidir."""
+        satirlar = []
+        while len(satirlar) < limit:
+            istenen = min(sayfa, limit - len(satirlar))
+            parca = self.sec(tablo, f"{sorgu}&limit={istenen}&offset={len(satirlar)}") or []
+            satirlar.extend(parca)
+            if len(parca) < istenen:
+                break
+        return satirlar
+
     def rpc(self, ad, veri=None):
         return self.istek("POST", f"rpc/{ad}", veri or {})
 

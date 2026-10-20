@@ -222,9 +222,9 @@ def main():
     zaman = quote(SIMDI().isoformat())
     alanlar = "select=id,alan,ad,durum,para,myshopify,acilis,hata_sayisi,ilk_gorulme"
     # Türkiye'ye satan mağazalar (ülke, para, dil ya da .tr uzantısı) her çalışmada sıranın başına alınır.
-    oncelikli = sb.sec("magazalar", f"{alanlar}&sonraki_tarama=lte.{zaman}"
-                                    f"&or=(ulke.eq.TR,para.eq.TRY,dil.eq.tr,tld.like.*.tr)&order=sonraki_tarama.asc&limit={a.limit}") or []
-    digerleri = sb.sec("magazalar", f"{alanlar}&sonraki_tarama=lte.{zaman}&order=sonraki_tarama.asc&limit={a.limit}") or []
+    oncelikli = sb.sec_hepsi("magazalar", f"{alanlar}&sonraki_tarama=lte.{zaman}"
+                                          f"&or=(ulke.eq.TR,para.eq.TRY,dil.eq.tr,tld.like.*.tr)&order=sonraki_tarama.asc,id.asc", a.limit)
+    digerleri = sb.sec_hepsi("magazalar", f"{alanlar}&sonraki_tarama=lte.{zaman}&order=sonraki_tarama.asc,id.asc", a.limit)
     gorulen = {m["id"] for m in oncelikli}
     sirada = (oncelikli + [m for m in digerleri if m["id"] not in gorulen])[:a.limit]
     print(f"Türkiye öncelikli: {len(oncelikli)}")
