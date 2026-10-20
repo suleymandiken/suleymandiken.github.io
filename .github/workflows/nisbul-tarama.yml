@@ -2,7 +2,7 @@ name: Nişbul günlük tarama
 
 on:
   schedule:
-    - cron: "17 3 * * *" # her gün 06:17 (Türkiye saati)
+    - cron: "17 3,15 * * *" # her gün 06:17 ve 18:17 (Türkiye saati)
   workflow_dispatch:
     inputs:
       gun:
@@ -18,11 +18,12 @@ concurrency:
 
 permissions:
   contents: read
+  actions: write # zamanlamayı canlı tutmak için (aşağıdaki son adım)
 
 jobs:
   tara:
     runs-on: ubuntu-latest
-    timeout-minutes: 340
+    timeout-minutes: 345
     env:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
@@ -34,8 +35,21 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Görsel kütüphanesini kur
+        run: pip install --quiet pillow==11.0.0
       - name: Yeni açılan Shopify mağazalarını keşfet
         run: python3 nisbul/araclar/kesif.py --gun "$GUN"
-      - name: Mağazaların ürünlerini tara
+      - name: Mağazaların ürünlerini ve satış sıralarını tara
         if: always()
-        run: python3 nisbul/araclar/tara.py --limit "$LIMIT" --sure 240
+        run: python3 nisbul/araclar/tara.py --limit "$LIMIT" --sure 230
+      - name: Görselleri eşleştir ve trendleri hesapla
+        if: always()
+        run: python3 nisbul/araclar/gorsel.py --limit 30000 --sure 50
+      # GitHub, 60 gün commit gelmeyen herkese açık depolarda zamanlanmış işleri durdurur.
+      # Her çalışmada işi yeniden etkinleştirmek bu sayacı sıfırlar; sistem kendi kendine çalışmaya devam eder.
+      - name: Zamanlamayı canlı tut
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/nisbul-tarama.yml/enable"
