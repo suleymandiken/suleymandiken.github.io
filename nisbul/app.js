@@ -199,6 +199,8 @@
     } catch (e) { $("#gorunum").innerHTML = bos("Veri yüklenemedi.", esc(hataMetni(e))); return; }
     istatistikCiz();
     if (!baglandi) { baglan(); baglandi = true; }
+    const kayitli = depo.al("filtre", null);
+    if (kayitli && typeof kayitli === "object") S.f = { ...kopya(F0), ...kayitli, anahtar: "", anahtarAd: "" };
     if (!location.hash) { const s = depo.al("sekme", ""); if (s) history.replaceState(null, "", "#" + s); }
     sekmeAyarla();
   }
@@ -280,6 +282,7 @@
     hizliCiz(); aktiflerCiz(); panelCiz();
   }
   async function yenile() {
+    depo.yaz("filtre", { ...S.f, anahtar: "", anahtarAd: "" });
     ciz();
     const sek = S.sekme;
     if (sek === "bulucu") { bulucuHazirla(); return; }
@@ -652,7 +655,9 @@
   function hizliCiz() {
     if (!TAX) return;
     const tek = S.f.kategoriler.length === 1 ? S.f.kategoriler[0] : null, hic = !S.f.kategoriler.length;
-    $("#hizli").innerHTML = [["", "Tümü"], ...TAX.kategoriler.map(k => [k.id, `${k.emoji} ${k.ad}`])]
+    const tr = S.f.ulkeler.length === 1 && S.f.ulkeler[0] === "TR";
+    $("#hizli").innerHTML = (S.sekme === "trendler" ? "" : `<button class="cip tr" type="button" role="listitem" data-turkiye aria-pressed="${tr}">🇹🇷 Türkiye</button><span class="cip-ayrac" aria-hidden="true"></span>`)
+      + [["", "Tümü"], ...TAX.kategoriler.map(k => [k.id, `${k.emoji} ${k.ad}`])]
       .map(([id, ad]) => `<button class="cip" type="button" role="listitem" data-kat="${id}" aria-pressed="${id ? tek === id : hic}">${esc(ad)}</button>`).join("");
   }
   const panelAc = ac => {
@@ -675,6 +680,11 @@
     $("#filtreKapat").addEventListener("click", () => panelAc(false));
     $("#perde").addEventListener("click", () => panelAc(false));
     $("#hizli").addEventListener("click", e => {
+      if (e.target.closest("[data-turkiye]")) {
+        const acik = S.f.ulkeler.length === 1 && S.f.ulkeler[0] === "TR";
+        S.f.ulkeler = acik ? [] : ["TR"];
+        taslakSifirla(); return yenile();
+      }
       const b = e.target.closest("[data-kat]"); if (!b) return;
       S.f.kategoriler = b.dataset.kat ? [b.dataset.kat] : []; S.f.nis = "";
       taslakSifirla(); yenile();

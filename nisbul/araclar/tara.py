@@ -196,8 +196,14 @@ def main():
     kurlar = tl_kurlari()
     bitis = time.time() + a.sure * 60
     zaman = quote(SIMDI().isoformat())
-    sirada = sb.sec("magazalar", f"select=id,alan,ad,durum,para,myshopify,acilis,hata_sayisi,ilk_gorulme"
-                                 f"&sonraki_tarama=lte.{zaman}&order=sonraki_tarama.asc&limit={a.limit}") or []
+    alanlar = "select=id,alan,ad,durum,para,myshopify,acilis,hata_sayisi,ilk_gorulme"
+    # Türkiye'ye satan mağazalar (ülke, para, dil ya da .tr uzantısı) her çalışmada sıranın başına alınır.
+    oncelikli = sb.sec("magazalar", f"{alanlar}&sonraki_tarama=lte.{zaman}"
+                                    f"&or=(ulke.eq.TR,para.eq.TRY,dil.eq.tr,tld.like.*.tr)&order=sonraki_tarama.asc&limit={a.limit}") or []
+    digerleri = sb.sec("magazalar", f"{alanlar}&sonraki_tarama=lte.{zaman}&order=sonraki_tarama.asc&limit={a.limit}") or []
+    gorulen = {m["id"] for m in oncelikli}
+    sirada = (oncelikli + [m for m in digerleri if m["id"] not in gorulen])[:a.limit]
+    print(f"Türkiye öncelikli: {len(oncelikli)}")
     print(f"Taranacak mağaza: {len(sirada)}")
 
     sayac, urun_toplam = Counter(), 0

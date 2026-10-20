@@ -310,3 +310,5 @@ dialog::backdrop{background:rgba(20,16,12,.5);backdrop-filter:blur(3px)}
 @media (max-width:560px){
   .hesap{margin-left:auto}
 }
+.cip.tr[aria-pressed=true]{background:#e30a17;border-color:#e30a17;color:#fff}
+.cip-ayrac{flex:none;width:1px;background:var(--line);margin:4px 2px}
