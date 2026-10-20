@@ -93,8 +93,9 @@ def urun_satiri(u, magaza_id, para, kurlar, siniflandir, simdi):
         "shopify_id": int(u["id"]),
         "ad": (u.get("title") or "").strip()[:200] or "(adsız)",
         "handle": (u.get("handle") or "")[:200],
-        "urun_tipi": tip[:100] or None,
-        "etiketler": ", ".join(etiketler)[:300] or None,
+        # Etiket ve ürün tipi sadece sınıflandırmada kullanılır; yer kazanmak için saklanmaz.
+        "urun_tipi": None,
+        "etiketler": None,
         "fiyat": fiyat,
         "eski_fiyat": sayi(v.get("compare_at_price")),
         "para": para,
@@ -210,12 +211,16 @@ def magaza_isle(m, siniflandir, kurlar, en_cok_sayfa):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--limit", type=int, default=3000, help="bu çalışmada en çok kaç mağaza taransın")
-    ap.add_argument("--sayfa", type=int, default=4, help="mağaza başına en çok kaç sayfa (250 ürün/sayfa)")
+    ap.add_argument("--sayfa", type=int, default=1, help="mağaza başına en çok kaç sayfa (250 ürün/sayfa)")
+    ap.add_argument("--gun", type=int, default=30, help="kaç günlük veri tutulsun; daha eski mağazalar silinir")
+    ap.add_argument("--en-cok-urun", dest="en_cok_urun", type=int, default=500000, help="toplam ürün tavanı")
     ap.add_argument("--is", dest="isci", type=int, default=16, help="aynı anda taranan mağaza sayısı")
     ap.add_argument("--sure", type=int, default=240, help="dakika cinsinden süre sınırı")
     a = ap.parse_args()
 
     sb = Supabase()
+    # Önce yer aç: pencere dışındaki mağazalar (ve ürünleri) silinir.
+    print("Eski veri temizliği:", json.dumps(sb.rpc("eski_verileri_sil", {"gun": a.gun, "en_cok_urun": a.en_cok_urun}), ensure_ascii=False))
     siniflandir = siniflandirici(taksonomi_yukle())
     kurlar = tl_kurlari()
     bitis = time.time() + a.sure * 60
