@@ -1,6 +1,6 @@
-:root{--bg:#f6f4ef;--yuz:#fffdf8;--ink:#1a1714;--mu:#6d665d;--line:#e2ddd3;--ac:#e8542f;--ac-ink:#fff;--iyi:#1f7a4d;--tile:#efebe3;--golge:0 1px 2px rgba(26,23,20,.06),0 8px 24px rgba(26,23,20,.06);
---f:"Bricolage Grotesque",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--r:16px}
-@media (prefers-color-scheme:dark){:root{--bg:#121110;--yuz:#1b1a18;--ink:#eeeae3;--mu:#a29a8f;--line:#2c2a27;--ac:#ff7a52;--ac-ink:#1a0d08;--iyi:#5cc792;--tile:#24221f;--golge:none}}
+:root{--bg:#ffffff;--yuz:#ffffff;--ink:#111827;--mu:#6b7280;--line:#e5e7eb;--ac:#034F46;--ac-ink:#ffffff;--iyi:#1f7a4d;--tile:#f3f4f6;--golge:0 1px 3px rgba(0,0,0,.08),0 6px 20px rgba(0,0,0,.06);
+--f:-apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,sans-serif;--r:12px}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1117;--yuz:#1a1d24;--ink:#f3f4f6;--mu:#9ca3af;--line:#2a2d36;--ac:#0a7a62;--ac-ink:#ffffff;--iyi:#5cc792;--tile:#1e2028;--golge:none}}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--f);-webkit-font-smoothing:antialiased}
@@ -332,3 +332,21 @@ dialog::backdrop{background:rgba(20,16,12,.5);backdrop-filter:blur(3px)}
 .tr-agirlik{align-self:center;background:var(--yuz);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:14px;font-weight:600;gap:8px}
 .tr-agirlik small{font-weight:400;color:var(--mu);font-size:12px}
 @media (max-width:560px){.takip-izgara{grid-template-columns:1fr}.tr-agirlik small{display:none}}
+
+/* duyuru çubuğu */
+.duyuru{background:color-mix(in srgb,var(--ac) 8%,var(--yuz));border-bottom:1px solid color-mix(in srgb,var(--ac) 20%,var(--line));padding:10px 48px 10px 16px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;text-align:center;position:relative;color:color-mix(in srgb,var(--ac) 70%,var(--ink))}
+.duyuru-kapat{border:0;background:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:16px;color:var(--mu);position:absolute;right:8px;top:50%;transform:translateY(-50%);cursor:pointer;line-height:1}
+.duyuru-kapat:hover{background:var(--tile)}
+
+/* mağaza kart düzeni (storelister tarzı) */
+.mag-kart{display:flex;flex-direction:column;padding:0;overflow:hidden}
+.mag-kart .gorsel{border-radius:0;aspect-ratio:16/9;font-size:48px;margin:0;flex:none;min-height:110px}
+.mag-kart .kart-ic{padding:14px 14px 8px;display:flex;flex-direction:column;gap:6px;flex:1}
+.mag-ustbilgi{display:flex;align-items:flex-start;gap:10px}
+.mag-ustbilgi>.kalp{position:static;background:var(--tile);margin-left:auto;flex:none;align-self:flex-start}
+.mag-meta{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12.5px;color:var(--mu);margin:2px 0 4px}
+.mag-eylem{display:flex;gap:8px;padding:0 14px 14px;margin-top:auto}
+.mag-detay-btn{flex:1;text-align:center;background:var(--ink);color:var(--bg);border:0;border-radius:999px;padding:10px 16px;font-weight:600;font-size:14px;cursor:pointer;transition:opacity .15s}
+.mag-detay-btn:hover{opacity:.85}
+.mag-dis-btn{display:grid;place-items:center;width:40px;height:40px;border-radius:999px;border:1px solid var(--line);background:var(--yuz);text-decoration:none;color:var(--ink);flex:none;font-size:18px;transition:background .15s}
+.mag-dis-btn:hover{background:var(--tile)}

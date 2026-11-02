@@ -254,14 +254,29 @@
   function magazaSatir(m) {
     MAGAZA.set(m.id, m);
     const n = nisOf(m.nis);
-    return `<div class="satir tikla" data-magaza="${m.id}" role="button" tabindex="0" aria-label="${esc(m.ad || m.alan)} ayrıntıları">
-      <span class="m-ic gorsel" style="--h:${ton(n.id)};aspect-ratio:auto">${yerTutucu(n)}</span>
-      <span class="m-ad">${esc(m.ad || m.alan)}<small>${esc(m.alan)}</small></span>
-      <span class="m-hucre gizle-m">${durumRozet(m.durum)} ${esc(n.ad)}</span>
-      <span class="m-hucre gizle-m" title="${esc(ulkeAdi(m.ulke || ""))}">${m.ulke ? bayrak(m.ulke) : ""} ${esc(m.para || "")}</span>
-      <span class="m-hucre">${m.durum === "sifreli" ? "şifreli" : sayi.format(m.urun_sayisi) + " ürün"}</span>
-      <span class="m-hucre gizle-m">${once(m.ilk_gorulme)}</span>
-      ${kalp("m", m.id, m.ad || m.alan)}</div>`;
+    return `<article class="kart mag-kart">
+      <div class="gorsel mag-kart-gorsel" style="--h:${ton(n.id)}">${yerTutucu(n)}</div>
+      <div class="kart-ic">
+        <div class="mag-ustbilgi">
+          <div style="min-width:0;flex:1">
+            <div class="kart-ad">${esc(m.ad || m.alan)}</div>
+            <small style="color:var(--mu);font-size:12px;display:block;margin-top:1px">${esc(m.alan)}</small>
+          </div>
+          ${kalp("m", m.id, m.ad || m.alan)}
+        </div>
+        <div class="mag-meta">
+          ${m.ulke ? `<span>${bayrak(m.ulke)} ${esc(ulkeAdi(m.ulke))}</span>` : ""}
+          ${m.para ? `<span>💰 ${esc(m.para)}</span>` : ""}
+          <span>📦 ${m.durum === "sifreli" ? "Şifreli" : sayi.format(m.urun_sayisi) + " ürün"}</span>
+          ${durumRozet(m.durum)}
+        </div>
+        <div class="alt" style="font-size:12px">${esc(n.ad)} · ${once(m.ilk_gorulme)}</div>
+      </div>
+      <div class="mag-eylem">
+        <button class="mag-detay-btn" type="button" data-magaza="${m.id}">Detayları Görüntüle</button>
+        <a class="mag-dis-btn" href="https://${esc(m.alan)}" target="_blank" rel="noopener" aria-label="${esc(m.ad || m.alan)} sitesini aç">↗</a>
+      </div>
+    </article>`;
   }
   const magazaBas = `<div class="satir bas"><span></span><span>Mağaza</span><span>Durum · niş</span><span>Ülke</span><span>Ürün</span><span>Keşif</span><span></span></div>`;
   function trendKart(t) {
@@ -320,7 +335,7 @@
       : tur === "magaza" ? `<b>${sayi.format(L.toplam)}</b> mağaza` : `<b>${sayi.format(L.toplam)}</b> ürün en az 2 farklı mağazada satılıyor`;
     if (!L.satirlar.length) { $("#gorunum").innerHTML = bosSonuc(tur); return; }
     const govde = tur === "urun" ? `<div class="izgara">${L.satirlar.map(urunKart).join("")}</div>`
-      : tur === "magaza" ? `<div class="tablo">${magazaBas}${L.satirlar.map(magazaSatir).join("")}</div>`
+      : tur === "magaza" ? `<div class="izgara">${L.satirlar.map(magazaSatir).join("")}</div>`
       : `<div class="izgara">${L.satirlar.map(trendKart).join("")}</div>`;
     $("#gorunum").innerHTML = govde + (kalan > 0 ? `<button class="daha" type="button" data-daha>Daha fazla göster (${sayi.format(kalan)} kaldı)</button>` : "");
   }
@@ -419,7 +434,7 @@
       <div class="bolum-bas"><h2>Kaydedilen ürünler (${u.length})</h2><button class="ikincil" type="button" data-csv="u" ${u.length ? "" : "disabled"}>CSV indir</button></div>
       ${u.length ? `<div class="izgara">${u.map(urunKart).join("")}</div>` : bos("Henüz ürün kaydetmedin.", "Ürün kartlarındaki ♡ ya da Bulucu'da sağa kaydırma burada toplanır.")}
       <div class="bolum-bas" style="margin-top:36px"><h2>Kaydedilen mağazalar (${m.length})</h2><button class="ikincil" type="button" data-csv="m" ${m.length ? "" : "disabled"}>CSV indir</button></div>
-      ${m.length ? `<div class="tablo">${magazaBas}${m.map(magazaSatir).join("")}</div>` : bos("Henüz mağaza kaydetmedin.", "Rakip olarak izlemek istediğin mağazaları buraya ekle.")}`;
+      ${m.length ? `<div class="izgara">${m.map(magazaSatir).join("")}</div>` : bos("Henüz mağaza kaydetmedin.", "Rakip olarak izlemek istediğin mağazaları buraya ekle.")}`;
   }
   function csvIndir(tur) {
     const q = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
