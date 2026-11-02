@@ -255,7 +255,10 @@
     MAGAZA.set(m.id, m);
     const n = nisOf(m.nis);
     return `<article class="kart mag-kart">
-      <div class="gorsel mag-kart-gorsel" style="--h:${ton(n.id)}">${yerTutucu(n)}</div>
+      <div class="gorsel mag-kart-gorsel" style="--h:${ton(n.id)}">
+        ${yerTutucu(n)}
+        <img class="mag-favicon" src="https://www.google.com/s2/favicons?domain=${esc(m.alan)}&sz=64" alt="" loading="lazy" onerror="this.style.display='none'">
+      </div>
       <div class="kart-ic">
         <div class="mag-ustbilgi">
           <div style="min-width:0;flex:1">
@@ -264,13 +267,16 @@
           </div>
           ${kalp("m", m.id, m.ad || m.alan)}
         </div>
+        <p class="mag-aciklama">Açıklama bilgisi mevcut değil.</p>
         <div class="mag-meta">
           ${m.ulke ? `<span>${bayrak(m.ulke)} ${esc(ulkeAdi(m.ulke))}</span>` : ""}
+          ${m.dil ? `<span>🌐 ${esc(buyukBas(dilAdi(m.dil)))}</span>` : ""}
           ${m.para ? `<span>💰 ${esc(m.para)}</span>` : ""}
+          ${m.ortanca_fiyat ? `<span>≈ ${para(m.ortanca_fiyat, m.para)}</span>` : ""}
           <span>📦 ${m.durum === "sifreli" ? "Şifreli" : sayi.format(m.urun_sayisi) + " ürün"}</span>
           ${durumRozet(m.durum)}
         </div>
-        <div class="alt" style="font-size:12px">${esc(n.ad)} · ${once(m.ilk_gorulme)}</div>
+        <div class="alt" style="font-size:12px">${esc(n.ad)}${m.alan_kayit ? ` · Tescil: ${gunKisa.format(tarihAl(m.alan_kayit))}` : ""} · Keşif: ${once(m.ilk_gorulme)}</div>
       </div>
       <div class="mag-eylem">
         <button class="mag-detay-btn" type="button" data-magaza="${m.id}">Detayları Görüntüle</button>
