@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 """Yeni açılan Shopify mağazalarını bulur ve veritabanına "yeni" olarak ekler.
 
-Yöntem: whoisds.com her gün bir önceki gün kaydedilen alan adlarının ücretsiz listesini yayınlar
-(.com, .shop, .store gibi genel uzantılar, günde ~70-150 bin alan adı). Her alan adının DNS kaydına
-bakılır; Shopify'a bağlanan mağazalar 23.227.38.x IP'sine ya da shops.myshopify.com'a yönlenir.
-Alan adı yeni alınmış + Shopify'a bağlanmış = yeni kurulan mağaza.
+Yöntem 1 – NRD (whoisds.com): her gün bir önceki gün kaydedilen alan adlarının ücretsiz listesini
+yayınlar (.com, .shop, .store gibi genel uzantılar, günde ~70-150 bin alan adı). Her alan adının DNS
+kaydına bakılır; Shopify'a bağlanan mağazalar 23.227.38.x IP'sine ya da shops.myshopify.com'a yönlenir.
 
-Alan adları bağlanmadan önce birkaç gün bekleyebildiği için son birkaç günün listesi tekrar taranır.
+Yöntem 2 – crt.sh (Certificate Transparency): Shopify her yeni mağazaya otomatik SSL sertifikası
+kesiyor. crt.sh bu sertifikaları anlık yayınlıyor. "%.myshopify.com" sorgusuyla yeni subdomain'ler
+bulunur; DNS sorgusu gerekmez, doğrudan mağaza adresidir.
 
 Kullanım:
-    python3 araclar/kesif.py                 # son 3 günün listesi
+    python3 araclar/kesif.py                 # NRD + crt.sh (son 3 gün)
     python3 araclar/kesif.py --gun 5
     python3 araclar/kesif.py --dosya alanlar.txt   # elle alan adı listesi ekle (DNS kontrolü yapılır)
+    python3 araclar/kesif.py --sadece-crtsh         # sadece crt.sh, NRD indirme
 """
 import argparse
 import base64
@@ -21,13 +23,46 @@ import sys
 import time
 import zipfile
 from concurrent.futures import ThreadPoolExecutor
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from ortak import Supabase, alan_temizle, getir, tld_bul  # noqa: E402
 
 SHOPIFY_AG = "23.227.38."
+CRTSH_URL = "https://crt.sh/?q=%.myshopify.com&output=json&deduplicate=Y"
+
+
+def crtsh_myshopify(gun=3):
+    """Certificate Transparency kayıtlarından son {gun} günde yeni .myshopify.com alan adlarını bulur.
+    DNS sorgusu gerekmez: sertifika = aktif Shopify mağazası."""
+    print(f"crt.sh: son {gun} günde yeni myshopify alan adları sorgulanıyor...")
+    try:
+        y = getir(CRTSH_URL, zaman_asimi=90)
+        if y.durum != 200:
+            print(f"  crt.sh HTTP {y.durum}", file=sys.stderr)
+            return set()
+        kayitlar = y.json()
+    except Exception as e:
+        print(f"  crt.sh sorgusu başarısız: {type(e).__name__}", file=sys.stderr)
+        return set()
+
+    kesim = datetime.now(timezone.utc) - timedelta(days=gun)
+    bulunan = set()
+    for k in kayitlar:
+        try:
+            zaman = datetime.fromisoformat(k.get("entry_timestamp", "").replace("Z", "+00:00"))
+        except (ValueError, TypeError):
+            zaman = None
+        if zaman and zaman < kesim:
+            continue
+        for satir in (k.get("name_value") or "").splitlines():
+            a = satir.strip().lstrip("*.").lower()
+            if a.endswith(".myshopify.com") and a.count(".") == 2:
+                bulunan.add(a)
+
+    print(f"  crt.sh: {len(bulunan)} myshopify alan adı bulundu")
+    return bulunan
 
 
 def nrd_indir(gun):
@@ -77,31 +112,43 @@ def main():
     ap.add_argument("--dosya", help="her satırda bir alan adı olan dosya (NRD yerine)")
     ap.add_argument("--is", dest="isci", type=int, default=128, help="eş zamanlı DNS sorgusu")
     ap.add_argument("--kuru", action="store_true", help="veritabanına yazma, sadece say")
+    ap.add_argument("--sadece-crtsh", action="store_true", help="sadece crt.sh sorgusunu çalıştır, NRD listesi indirme")
     a = ap.parse_args()
     socket.setdefaulttimeout(5)
     sb = None if a.kuru else Supabase()
 
-    if a.dosya:
-        kaynak = {"elle": sorted({x for x in (alan_temizle(s) for s in Path(a.dosya).read_text(encoding="utf-8").splitlines()) if x})}
-    else:
-        bugun = date.today()
-        kaynak = {}
-        for g in range(1, a.gun + 1):
-            gun = bugun - timedelta(days=g)
-            liste = nrd_indir(gun)
-            print(f"{gun}: {len(liste)} yeni alan adı")
-            if liste:
-                kaynak[gun.isoformat()] = liste
-
     toplam_yeni = 0
-    for etiket, alanlar in kaynak.items():
-        bulunan = tara(alanlar, a.isci)
-        print(f"{etiket}: {len(alanlar)} alan adından {len(bulunan)} tanesi Shopify'a bağlı")
-        if sb and bulunan:
-            satirlar = [{"alan": x, "tld": tld_bul(x), "kaynak": "elle" if etiket == "elle" else "nrd",
-                         "alan_kayit": None if etiket == "elle" else etiket} for x in bulunan]
-            sb.ekle("magazalar", satirlar, "alan", birlestir=False)
-        toplam_yeni += len(bulunan)
+
+    # --- Yöntem 1: NRD (yeni kayıtlı özel domain'ler) ---
+    if not a.sadece_crtsh:
+        if a.dosya:
+            kaynak = {"elle": sorted({x for x in (alan_temizle(s) for s in Path(a.dosya).read_text(encoding="utf-8").splitlines()) if x})}
+        else:
+            bugun = date.today()
+            kaynak = {}
+            for g in range(1, a.gun + 1):
+                gun = bugun - timedelta(days=g)
+                liste = nrd_indir(gun)
+                print(f"{gun}: {len(liste)} yeni alan adı")
+                if liste:
+                    kaynak[gun.isoformat()] = liste
+
+        for etiket, alanlar in kaynak.items():
+            bulunan = tara(alanlar, a.isci)
+            print(f"{etiket}: {len(alanlar)} alan adından {len(bulunan)} tanesi Shopify'a bağlı")
+            if sb and bulunan:
+                satirlar = [{"alan": x, "tld": tld_bul(x), "kaynak": "elle" if etiket == "elle" else "nrd",
+                             "alan_kayit": None if etiket == "elle" else etiket} for x in bulunan]
+                sb.ekle("magazalar", satirlar, "alan", birlestir=False)
+            toplam_yeni += len(bulunan)
+
+    # --- Yöntem 2: crt.sh (myshopify subdomain'leri, DNS sorgusu gerekmez) ---
+    crtsh_bulunan = crtsh_myshopify(a.gun)
+    if sb and crtsh_bulunan:
+        satirlar = [{"alan": x, "tld": ".myshopify.com", "myshopify": x, "kaynak": "crtsh"} for x in crtsh_bulunan]
+        sb.ekle("magazalar", satirlar, "alan", birlestir=False)
+    toplam_yeni += len(crtsh_bulunan)
+
     # Mağaza adlarını herkese açık Actions kayıtlarına yazmıyoruz; veri senin rekabet avantajın.
     print(f"Toplam {toplam_yeni} Shopify mağazası işlendi (zaten kayıtlı olanlar atlandı).")
 
