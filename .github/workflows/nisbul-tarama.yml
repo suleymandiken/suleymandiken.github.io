@@ -89,7 +89,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Mağazaların ürünlerini ve satış sıralarını tara (parça ${{ matrix.parca }}/4)
-        run: python3 nisbul/araclar/tara.py --limit "$LIMIT" --sure 230 --is 16 --parca ${{ matrix.parca }} --parca-sayisi 4
+        run: python3 nisbul/araclar/tara.py --limit "$LIMIT" --sure 230 --is 10 --parca ${{ matrix.parca }} --parca-sayisi 4
 
   # 3) Görsel eşleştirme, trendler ve site özeti.
   gorsel:
