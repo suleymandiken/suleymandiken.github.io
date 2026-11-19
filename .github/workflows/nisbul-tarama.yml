@@ -10,7 +10,7 @@ on:
         default: "3"
       limit:
         description: "Bu çalışmada en çok kaç mağaza taransın"
-        default: "3000"
+        default: "6000"
 
 concurrency:
   group: nisbul-tarama
@@ -28,7 +28,7 @@ jobs:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
       GUN: ${{ inputs.gun || '3' }}
-      LIMIT: ${{ inputs.limit || '3000' }}
+      LIMIT: ${{ inputs.limit || '6000' }}
       # ICANN CZDS hesabı (czds.icann.org). Tanımlı değilse keşif sadece whoisds örneğiyle çalışır.
       CZDS_KULLANICI: ${{ secrets.CZDS_KULLANICI }}
       CZDS_SIFRE: ${{ secrets.CZDS_SIFRE }}
@@ -72,7 +72,7 @@ jobs:
             | xargs -r -n1 gh cache delete -R "${{ github.repository }}"
       - name: Mağazaların ürünlerini ve satış sıralarını tara
         if: always()
-        run: python3 nisbul/araclar/tara.py --limit "$LIMIT" --sure 230
+        run: python3 nisbul/araclar/tara.py --limit "$LIMIT" --sure 230 --is 48
       - name: Görselleri eşleştir ve trendleri hesapla
         if: always()
         run: python3 nisbul/araclar/gorsel.py --limit 30000 --sure 50
