@@ -10,7 +10,7 @@ on:
         default: "3"
       limit:
         description: "Bu çalışmada en çok kaç mağaza taransın"
-        default: "2000"
+        default: "3000"
 
 concurrency:
   group: nisbul-tarama
@@ -28,7 +28,11 @@ jobs:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
       GUN: ${{ inputs.gun || '3' }}
-      LIMIT: ${{ inputs.limit || '2000' }}
+      LIMIT: ${{ inputs.limit || '3000' }}
+      # ICANN CZDS hesabı (czds.icann.org). Tanımlı değilse keşif sadece whoisds örneğiyle çalışır.
+      CZDS_KULLANICI: ${{ secrets.CZDS_KULLANICI }}
+      CZDS_SIFRE: ${{ secrets.CZDS_SIFRE }}
+      CZDS_TLDLER: ${{ vars.CZDS_TLDLER }}
       PYTHONUNBUFFERED: "1" # ilerleme satırları kayıtta anında görünsün
     steps:
       - uses: actions/checkout@v4
@@ -37,8 +41,35 @@ jobs:
           python-version: "3.12"
       - name: Görsel kütüphanesini kur
         run: pip install --quiet pillow==11.0.0
+      # .com bölge dosyası ~160 milyon alan adı: sıralama için disk açılır (kullanılmayan SDK'lar silinir).
+      - name: Disk aç
+        if: env.CZDS_KULLANICI != ''
+        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL && df -h / | tail -1
+      # Dünkü alan adı listesi önbellekte durur; bugünküyle karşılaştırılıp yeni kayıtlar bulunur.
+      - name: Dünkü bölge listelerini geri yükle
+        if: env.CZDS_KULLANICI != ''
+        uses: actions/cache/restore@v4
+        with:
+          path: .czds
+          key: czds-${{ github.run_id }}
+          restore-keys: czds-
       - name: Yeni açılan Shopify mağazalarını keşfet
-        run: python3 nisbul/araclar/kesif.py --gun "$GUN"
+        run: python3 nisbul/araclar/kesif.py --gun "$GUN" --czds-klasor .czds
+      - name: Bugünkü bölge listelerini sakla
+        if: always() && hashFiles('.czds/guncellendi') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: .czds
+          key: czds-${{ github.run_id }}
+      # Her gün yeni bir önbellek kaydı oluşur; depolama dolmasın diye sadece en yenisi tutulur.
+      - name: Eski bölge önbelleklerini sil
+        if: always() && hashFiles('.czds/guncellendi') != ''
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh cache list -R "${{ github.repository }}" --key czds- --sort created_at --order desc --json id --jq '.[1:][].id' \
+            | xargs -r -n1 gh cache delete -R "${{ github.repository }}"
       - name: Mağazaların ürünlerini ve satış sıralarını tara
         if: always()
         run: python3 nisbul/araclar/tara.py --limit "$LIMIT" --sure 230
