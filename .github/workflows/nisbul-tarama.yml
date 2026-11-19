@@ -6,11 +6,11 @@ on:
   workflow_dispatch:
     inputs:
       gun:
-        description: "Kaç günlük yeni alan adı listesi taransın"
+        description: "Kaç günlük whoisds listesi taransın"
         default: "3"
       limit:
-        description: "Bu çalışmada en çok kaç mağaza taransın"
-        default: "6000"
+        description: "Her tarama parçası en çok kaç mağaza tarasın (4 parça)"
+        default: "2500"
 
 concurrency:
   group: nisbul-tarama
@@ -18,29 +18,29 @@ concurrency:
 
 permissions:
   contents: read
-  actions: write # zamanlamayı canlı tutmak için (aşağıdaki son adım)
+  actions: write # önbellek temizliği ve zamanlamayı canlı tutmak için
+
+env:
+  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+  SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+  PYTHONUNBUFFERED: "1" # ilerleme satırları kayıtta anında görünsün
 
 jobs:
-  tara:
+  # 1) Yeni kaydedilen alan adlarından Shopify'a bağlananları bul.
+  kesif:
     runs-on: ubuntu-latest
-    timeout-minutes: 345
+    timeout-minutes: 150
     env:
-      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-      SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
       GUN: ${{ inputs.gun || '3' }}
-      LIMIT: ${{ inputs.limit || '6000' }}
       # ICANN CZDS hesabı (czds.icann.org). Tanımlı değilse keşif sadece whoisds örneğiyle çalışır.
       CZDS_KULLANICI: ${{ secrets.CZDS_KULLANICI }}
       CZDS_SIFRE: ${{ secrets.CZDS_SIFRE }}
       CZDS_TLDLER: ${{ vars.CZDS_TLDLER }}
-      PYTHONUNBUFFERED: "1" # ilerleme satırları kayıtta anında görünsün
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Görsel kütüphanesini kur
-        run: pip install --quiet pillow==11.0.0
       # .com bölge dosyası ~160 milyon alan adı: sıralama için disk açılır (kullanılmayan SDK'lar silinir).
       - name: Disk aç
         if: env.CZDS_KULLANICI != ''
@@ -70,11 +70,41 @@ jobs:
         run: |
           gh cache list -R "${{ github.repository }}" --key czds- --sort created_at --order desc --json id --jq '.[1:][].id' \
             | xargs -r -n1 gh cache delete -R "${{ github.repository }}"
-      - name: Mağazaların ürünlerini ve satış sıralarını tara
-        if: always()
-        run: python3 nisbul/araclar/tara.py --limit "$LIMIT" --sure 230 --is 48
+
+  # 2) Mağazaları tara. Shopify istekleri IP başına kıstığı için iş 4 ayrı sunucuya (4 farklı IP) bölünür.
+  tara:
+    needs: kesif
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 250
+    strategy:
+      fail-fast: false
+      matrix:
+        parca: [0, 1, 2, 3]
+    env:
+      LIMIT: ${{ inputs.limit || '2500' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Mağazaların ürünlerini ve satış sıralarını tara (parça ${{ matrix.parca }}/4)
+        run: python3 nisbul/araclar/tara.py --limit "$LIMIT" --sure 230 --is 16 --parca ${{ matrix.parca }} --parca-sayisi 4
+
+  # 3) Görsel eşleştirme, trendler ve site özeti.
+  gorsel:
+    needs: tara
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Görsel kütüphanesini kur
+        run: pip install --quiet pillow==11.0.0
       - name: Görselleri eşleştir ve trendleri hesapla
-        if: always()
         run: python3 nisbul/araclar/gorsel.py --limit 30000 --sure 50
       # GitHub, 60 gün commit gelmeyen herkese açık depolarda zamanlanmış işleri durdurur.
       # Her çalışmada işi yeniden etkinleştirmek bu sayacı sıfırlar; sistem kendi kendine çalışmaya devam eder.
