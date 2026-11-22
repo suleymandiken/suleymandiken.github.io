@@ -1,0 +1,32 @@
+name: Nişbul satış takibi
+
+# Üyelerin takibe aldığı mağazaların ve ürünlerin stoğunu her saat ölçer (araclar/takip.py).
+on:
+  schedule:
+    - cron: "41 * * * *" # her saat :41'de
+  workflow_dispatch:
+
+concurrency:
+  group: nisbul-takip
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+  SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  olc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 58
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # Mağazalar 45 dakikada bitmezse en eski ölçülenden başlanarak kalanlar bir sonraki saate kalır.
+      - name: Takip edilen mağazaları ve ürünleri ölç
+        run: python3 nisbul/araclar/takip.py --is 8 --sure 40
