@@ -82,7 +82,7 @@ jobs:
             | xargs -r -n1 gh cache delete -R "${{ github.repository }}"
 
   # 2) Mağazaları tara. Ürün tavanı 340 bin: Supabase ücretsiz paketi 0,5 GB; tavan aşılınca en eski mağazaların ürünleri silinir.
-  # (önceki satır) Mağazaları tara. Shopify istekleri IP başına kıstığı için iş 4 ayrı sunucuya (4 farklı IP) bölünür.
+  # Shopify istekleri IP başına kıstığı için iş 4 ayrı sunucuya (4 farklı IP) bölünür.
   tara:
     needs: kesif
     if: always()
