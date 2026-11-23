@@ -23,7 +23,9 @@ permissions:
 env:
   SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
   SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-  PYTHONUNBUFFERED: "1" # ilerleme satırları kayıtta anında görünsün
+  PYTHONUNBUFFERED: "1"
+  # Kod gizli (Supabase Storage nisbul-kod kutusu, kaynak: suleymandiken/nisbul). Depo herkese açık olduğu için
+  # kayıtlar da herkese açıktır: çıktı dosyaya yazılır, sadece hata olursa son satırlar görünür.
 
 jobs:
   # 1) Yeni kaydedilen alan adlarından Shopify'a bağlananları bul.
@@ -37,7 +39,12 @@ jobs:
       CZDS_SIFRE: ${{ secrets.CZDS_SIFRE }}
       CZDS_TLDLER: ${{ vars.CZDS_TLDLER }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Kodu gizli depodan indir
+        run: |
+          H=(-H "apikey: $SUPABASE_SERVICE_KEY")
+          case "$SUPABASE_SERVICE_KEY" in sb_*) ;; *) H+=(-H "Authorization: Bearer $SUPABASE_SERVICE_KEY");; esac
+          curl -sf "${SUPABASE_URL%/}/storage/v1/object/nisbul-kod/nisbul-tarayici.tar.gz" "${H[@]}" -o k.tgz
+          tar -xzf k.tgz && rm k.tgz
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -54,7 +61,7 @@ jobs:
           key: czds-${{ github.run_id }}
           restore-keys: czds-
       - name: Yeni açılan Shopify mağazalarını keşfet
-        run: python3 nisbul/araclar/kesif.py --gun "$GUN" --czds-klasor .czds
+        run: python3 nisbul/araclar/kesif.py --gun "$GUN" --czds-klasor .czds > cikti.log 2>&1 || { tail -n 15 cikti.log; exit 1; }
       - name: Bugünkü bölge listelerini sakla
         if: always() && hashFiles('.czds/guncellendi') != ''
         uses: actions/cache/save@v4
@@ -84,12 +91,17 @@ jobs:
     env:
       LIMIT: ${{ inputs.limit || '2500' }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Kodu gizli depodan indir
+        run: |
+          H=(-H "apikey: $SUPABASE_SERVICE_KEY")
+          case "$SUPABASE_SERVICE_KEY" in sb_*) ;; *) H+=(-H "Authorization: Bearer $SUPABASE_SERVICE_KEY");; esac
+          curl -sf "${SUPABASE_URL%/}/storage/v1/object/nisbul-kod/nisbul-tarayici.tar.gz" "${H[@]}" -o k.tgz
+          tar -xzf k.tgz && rm k.tgz
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: Mağazaların ürünlerini ve satış sıralarını tara (parça ${{ matrix.parca }}/4)
-        run: python3 nisbul/araclar/tara.py --limit "$LIMIT" --sure 230 --is 10 --parca ${{ matrix.parca }} --parca-sayisi 4
+        run: python3 nisbul/araclar/tara.py --limit "$LIMIT" --sure 230 --is 10 --parca ${{ matrix.parca }} --parca-sayisi 4 > cikti.log 2>&1 || { tail -n 15 cikti.log; exit 1; }
 
   # 3) Görsel eşleştirme, trendler ve site özeti.
   gorsel:
@@ -98,14 +110,19 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 70
     steps:
-      - uses: actions/checkout@v4
+      - name: Kodu gizli depodan indir
+        run: |
+          H=(-H "apikey: $SUPABASE_SERVICE_KEY")
+          case "$SUPABASE_SERVICE_KEY" in sb_*) ;; *) H+=(-H "Authorization: Bearer $SUPABASE_SERVICE_KEY");; esac
+          curl -sf "${SUPABASE_URL%/}/storage/v1/object/nisbul-kod/nisbul-tarayici.tar.gz" "${H[@]}" -o k.tgz
+          tar -xzf k.tgz && rm k.tgz
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - name: Görsel kütüphanesini kur
         run: pip install --quiet pillow==11.0.0
       - name: Görselleri eşleştir ve trendleri hesapla
-        run: python3 nisbul/araclar/gorsel.py --limit 30000 --sure 50
+        run: python3 nisbul/araclar/gorsel.py --limit 30000 --sure 50 > cikti.log 2>&1 || { tail -n 15 cikti.log; exit 1; }
       # GitHub, 60 gün commit gelmeyen herkese açık depolarda zamanlanmış işleri durdurur.
       # Her çalışmada işi yeniden etkinleştirmek bu sayacı sıfırlar; sistem kendi kendine çalışmaya devam eder.
       - name: Zamanlamayı canlı tut

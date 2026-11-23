@@ -23,10 +23,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 58
     steps:
-      - uses: actions/checkout@v4
+      - name: Kodu gizli depodan indir
+        run: |
+          H=(-H "apikey: $SUPABASE_SERVICE_KEY")
+          case "$SUPABASE_SERVICE_KEY" in sb_*) ;; *) H+=(-H "Authorization: Bearer $SUPABASE_SERVICE_KEY");; esac
+          curl -sf "${SUPABASE_URL%/}/storage/v1/object/nisbul-kod/nisbul-tarayici.tar.gz" "${H[@]}" -o k.tgz
+          tar -xzf k.tgz && rm k.tgz
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       # Mağazalar 45 dakikada bitmezse en eski ölçülenden başlanarak kalanlar bir sonraki saate kalır.
       - name: Takip edilen mağazaları ve ürünleri ölç
-        run: python3 nisbul/araclar/takip.py --is 8 --sure 40
+        run: python3 nisbul/araclar/takip.py --is 8 --sure 40 > cikti.log 2>&1 || { tail -n 15 cikti.log; exit 1; }
