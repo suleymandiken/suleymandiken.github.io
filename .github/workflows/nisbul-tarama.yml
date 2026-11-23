@@ -81,7 +81,8 @@ jobs:
           gh cache list -R "${{ github.repository }}" --key czds- --sort created_at --order desc --json id --jq '.[1:][].id' \
             | xargs -r -n1 gh cache delete -R "${{ github.repository }}"
 
-  # 2) Mağazaları tara. Shopify istekleri IP başına kıstığı için iş 4 ayrı sunucuya (4 farklı IP) bölünür.
+  # 2) Mağazaları tara. Ürün tavanı 340 bin: Supabase ücretsiz paketi 0,5 GB; tavan aşılınca en eski mağazaların ürünleri silinir.
+  # (önceki satır) Mağazaları tara. Shopify istekleri IP başına kıstığı için iş 4 ayrı sunucuya (4 farklı IP) bölünür.
   tara:
     needs: kesif
     if: always()
@@ -104,7 +105,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Mağazaların ürünlerini ve satış sıralarını tara (parça ${{ matrix.parca }}/4)
-        run: python3 nisbul/araclar/tara.py --limit "$LIMIT" --sure 230 --is 10 --parca ${{ matrix.parca }} --parca-sayisi 4 > cikti.log 2>&1 || { tail -n 15 cikti.log; exit 1; }
+        run: python3 nisbul/araclar/tara.py --limit "$LIMIT" --en-cok-urun 340000 --sure 230 --is 10 --parca ${{ matrix.parca }} --parca-sayisi 4 > cikti.log 2>&1 || { tail -n 15 cikti.log; exit 1; }
 
   # 3) Görsel eşleştirme, trendler ve site özeti.
   gorsel:
