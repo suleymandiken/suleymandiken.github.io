@@ -2,7 +2,8 @@ name: Nişbul günlük tarama
 
 on:
   schedule:
-    - cron: "17 3,9,15,21 * * *" # her gün 06:17, 12:17, 18:17, 00:17 (Türkiye saati)
+    - cron: "17 3,9,15,21 * * *" # keşif + tarama: 06:17, 12:17, 18:17, 00:17 (Türkiye saati)
+    - cron: "17 * * * *" # diğer saatlerde sadece tarama (ürün ve satış sırası güncellemesi)
   workflow_dispatch:
     inputs:
       gun:
@@ -29,7 +30,9 @@ env:
 
 jobs:
   # 1) Yeni kaydedilen alan adlarından Shopify'a bağlananları bul.
+  # Saatlik çalışmalarda keşif atlanır: alan adı listeleri günde birkaç kez güncellenir, CZDS sık indirmeyi kısıtlar.
   kesif:
+    if: github.event_name != 'schedule' || github.event.schedule == '17 3,9,15,21 * * *'
     runs-on: ubuntu-latest
     timeout-minutes: 150
     env:
