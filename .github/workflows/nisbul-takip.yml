@@ -1,9 +1,13 @@
 name: Nişbul satış takibi
 
 # Üyelerin takibe aldığı mağazaların ve ürünlerin stoğunu her saat ölçer (araclar/takip.py).
+# GitHub zamanlanmış çalışmaları saatlik tetiklemiyor (25.11.2026 ölçümü: günde 2-3 çalışma, aralar 9-15 saat).
+# Bu yüzden tek çalışma 5,5 saat boyunca saatte bir ölçer, sonunda kendini yeniden başlatır
+# (workflow_dispatch, GITHUB_TOKEN ile yeni çalışma başlatabilen tek olaylardan biridir).
+# Zamanlama yalnızca zincir koparsa yeniden başlatmak içindir; concurrency aynı anda tek çalışma bırakır.
 on:
   schedule:
-    - cron: "41 * * * *" # her saat :41'de
+    - cron: "41 * * * *"
   workflow_dispatch:
 
 concurrency:
@@ -12,6 +16,7 @@ concurrency:
 
 permissions:
   contents: read
+  actions: write
 
 env:
   SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -21,7 +26,7 @@ env:
 jobs:
   olc:
     runs-on: ubuntu-latest
-    timeout-minutes: 58
+    timeout-minutes: 345
     steps:
       - name: Kodu gizli depodan indir
         run: |
@@ -32,6 +37,26 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      # Mağazalar 45 dakikada bitmezse en eski ölçülenden başlanarak kalanlar bir sonraki saate kalır.
-      - name: Takip edilen mağazaları ve ürünleri ölç
-        run: python3 nisbul/araclar/takip.py --is 8 --sure 40 > cikti.log 2>&1 || { tail -n 15 cikti.log; exit 1; }
+      # Her tur en çok 40 dakika (kalan mağazalar bir sonraki tura kalır); turlar saatte bir başlar.
+      # Bir turun hatası döngüyü durdurmaz.
+      - name: Takip edilen mağazaları ve ürünleri saatte bir ölç
+        run: |
+          bitis=$((SECONDS + 330*60))
+          tur=0
+          while :; do
+            bas=$SECONDS; tur=$((tur+1))
+            echo "== Tur $tur $(date -u +%H:%M) UTC"
+            if python3 nisbul/araclar/takip.py --is 8 --sure 40 > cikti.log 2>&1; then grep -E "sonucu:" cikti.log || true
+            else echo "Tur $tur hata verdi:"; tail -n 15 cikti.log; fi
+            gecen=$((SECONDS - bas))
+            bekle=$(( gecen < 3600 ? 3600 - gecen : 0 ))
+            # Bir tur daha (bekleme + en çok 45 dk) sığmıyorsa bitir.
+            [ $((bitis - SECONDS)) -lt $((bekle + 2700)) ] && break
+            sleep $bekle
+          done
+      - name: Zinciri sürdür
+        # Yalnızca başarılı bitişte: kod indirilemezse hızlı bir hata döngüsü olmasın, zamanlama yeniden başlatır.
+        if: success() && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run nisbul-takip.yml --repo "$GITHUB_REPOSITORY" --ref main
